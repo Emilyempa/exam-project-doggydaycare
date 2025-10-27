@@ -1,9 +1,11 @@
 package com.doggydaycare.backend.controller;
 
 import org.springframework.web.bind.annotation.*;
-
+// Marks this class as a REST controller (returns JSON responses instead of HTML)
 @RestController
-@RequestMapping("/api")
+// Base path for all endpoints in this controller
+@RequestMapping("/api/v1/")
+// Allows CORS requests from the frontend (Next.js on localhost:3000)
 @CrossOrigin(origins = "http://localhost:3000")
 public class HelloController {
 
@@ -20,5 +22,6 @@ public class HelloController {
         );
     }
 }
-
+// Record type used as a response object (automatically converted to JSON)
+// Immutable and used for data transfer (DTO)
 record HelloResponse(String message, String description) {}
