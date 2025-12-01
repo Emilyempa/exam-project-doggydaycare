@@ -4,29 +4,50 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.web.SecurityFilterChain;
-// Marks this class as a configuration class for Spring
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+
+import java.util.Arrays;
+import java.util.Collections;
+
 @Configuration
-// Enables Spring Security’s web security support
 @EnableWebSecurity
 public class SecurityConfig {
-    // Defines the security filter chain, how incoming HTTP requests are secured
+
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) {
         http
-                // Disables CSRF (Cross-Site Request Forgery) protection for simplicity during development
-                //TODO Remember to enable this later when you implement authentication or session handling
-                .csrf(csrf -> csrf.disable())
-                // Enables CORS support so the frontend (on a different port) can call this API
-                .cors(cors -> cors.configure(http))
-                // Defines authorization rules for incoming HTTP requests
+                // Disable CSRF protection (useful during development)
+                .csrf(AbstractHttpConfigurer::disable)
+                // Enable CORS with custom configuration defined below
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+                // Authorization rules: currently allow ALL requests without authentication (ONLY UNDER DEVELOPMENT)
                 .authorizeHttpRequests(auth -> auth
-                        // Allow all requests to any endpoint starting with /api/
-                        .requestMatchers("/api/**").permitAll()
-                        // Any other request must be authenticated
-                        .anyRequest().authenticated()
+                        .anyRequest().permitAll()
                 );
-        // Builds and returns the configured security filter chain
-        return http.build();
+
+        return http.build();    }
+
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration();
+
+        // Allow requests only from the Next.js frontend on localhost:3000
+        configuration.setAllowedOrigins(Collections.singletonList("http://localhost:3000"));
+        // Allow common HTTP methods for REST APIs
+        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        // Allow all headers (e.g., Authorization, Content-Type)
+        configuration.setAllowedHeaders(Collections.singletonList("*"));
+        // Allow cookies/credentials to be sent with requests (important for sessions or auth tokens)
+        configuration.setAllowCredentials(true);
+
+        // Apply this CORS configuration to all endpoints (/**)
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration);
+
+        return source;
     }
 }
