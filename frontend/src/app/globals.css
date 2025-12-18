@@ -53,7 +53,7 @@ a {
   color: var(--color-primary);
   text-decoration: none;
 }
-a:hover { text-decoration: underline; }
+a:hover { text-decoration: none; }
 
 /* Buttons */
 button {
