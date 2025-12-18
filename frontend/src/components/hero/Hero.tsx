@@ -17,8 +17,8 @@ export default function Hero() {
           rounded-md
           border border-transparent
           bg-white/90
-          px-4 py-2 t
-          ext-sm font-medium text-gray-900
+          px-4 py-2
+          text-sm font-medium
           transition
           hover:bg-white
           hover:border-[#5A9690]
