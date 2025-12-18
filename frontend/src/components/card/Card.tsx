@@ -7,11 +7,12 @@ interface Card {
   description?: string;
   children: React.ReactNode;
   actions?: React.ReactNode; // ex. Edit-button or Save/Cancel
+  className?: string;
 }
 
-export const Card: React.FC<Card> = ({ image, title, description, children, actions }) => {
+export const Card: React.FC<Card> = ({ image, title, description, children, actions, className }) => {
   return (
-    <div className="rounded-md border border-transparent shadow-sm p-4 hover:border-[#5A9690]">
+    <div className={`card ${className ?? ""}`}>
       {/* Header */}
       <div className="flex items-center justify-between mb-2">
         <div className="flex items-center gap-2">
