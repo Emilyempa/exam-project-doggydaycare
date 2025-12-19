@@ -53,7 +53,12 @@ a {
   color: var(--color-primary);
   text-decoration: none;
 }
-a:hover { text-decoration: none; }
+a:hover,
+a:focus-visible {
+  color: var(--color-secondary);
+  text-decoration: none;
+  outline: none;
+}
 
 /* Buttons */
 button {
@@ -92,7 +97,7 @@ button:hover { filter: brightness(1.1); }
 }
 
 .card-md {
-  width: 30rem;
+  width: 27rem;
   height: auto;
 }
 

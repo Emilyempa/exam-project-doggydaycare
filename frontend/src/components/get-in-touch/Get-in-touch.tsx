@@ -4,8 +4,8 @@ import {Phone, Mail, MapPin} from 'lucide-react';
 export default function GetInTouch() {
   return(
     <footer className={"footer flex flex-col items-center text-center"}>
-      <h3 className={"text-xl font-bold mb-3 mt-20 p-10"} >Get in touch</h3>
-      <p className={"text-lg mb-5 pb-10"}>Have questions? We would love to hear from you!</p>
+      <h3 className={"text-3xl font-bold mb-3 mt-20 p-10"} >Get in touch</h3>
+      <p className={"text-xl mb-5 pb-10"}>Have questions? We would love to hear from you!</p>
 
       <div className={"grid grid-cols-1 md:grid-cols-3 gap-6 mb-8 max-w-4xl w-full px-4"}>
         {/* Phone */}
