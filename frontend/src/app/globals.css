@@ -108,11 +108,6 @@ button:hover { filter: brightness(1.1); }
 .bg-feature-primary { background: var(--color-feature-primary-bg); }
 .bg-feature-secondary { background: var(--color-feature-secondary-bg); }
 
-/* Text */
-h1, h2, h3, h4, h5, h6, p {
-  text-align: center;
-}
-
 .footer {
   background: var(--color-bg-secondary);
 

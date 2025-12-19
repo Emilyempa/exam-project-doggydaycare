@@ -29,7 +29,7 @@ export default function Hero() {
       </div>
 
       {/* Centered content */}
-      <div className="relative z-10 flex h-full items-center justify-center text-center text-white px-4">
+      <div className="relative z-10 flex h-full items-center justify-center text-center text-[#E5E0E0] px-4">
         <div className="max-w-2xl">
           <h1 className="text-4xl font-bold sm:text-6xl">
             Welcome to Doggy Daycare

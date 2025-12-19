@@ -1,8 +1,8 @@
 import React from "react";
-import Image from "next/image";
+import { LucideIcon } from "lucide-react";
 
 interface Card {
-  image?: string; // (use path to /public or extern URL)
+  icon?: LucideIcon,
   title: string;
   description?: string;
   children: React.ReactNode;
@@ -10,27 +10,26 @@ interface Card {
   className?: string;
 }
 
-export const Card: React.FC<Card> = ({ image, title, description, children, actions, className }) => {
+export const Card: React.FC<Card> = ({ icon: Icon, title, description, children, actions, className }) => {
   return (
     <div className={`card ${className ?? ""}`}>
+      {/* Icon */}
+      {Icon && (
+        <div className="flex justify-center mb-4">
+          <Icon
+            className="w-12 h-12"
+            style={{color: '#5A9690'}}
+          />
+        </div>
+      )}
+
       {/* Header */}
       <div className="flex items-center justify-between mb-2">
-        <div className="flex items-center gap-2">
-          {image && (
-            <Image
-              src={image}
-              alt=""
-              width={24}
-              height={24}
-              className="shrink-0"
-            />
+        <div className="flex-1">
+          <h2 className="text-lg font-semibold text-center">{title}</h2>
+          {description && (
+            <p className="text-sm text-center">{description}</p>
           )}
-          <div>
-            <h2 className="text-lg font-semibold ">{title}</h2>
-            {description && (
-              <p className="text-sm ">{description}</p>
-            )}
-          </div>
         </div>
         {actions && <div>{actions}</div>}
       </div>
@@ -40,4 +39,3 @@ export const Card: React.FC<Card> = ({ image, title, description, children, acti
     </div>
   );
 };
-

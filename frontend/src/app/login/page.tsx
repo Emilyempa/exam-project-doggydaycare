@@ -1,5 +1,9 @@
-"use client"
+import {LoginForm} from "@/components/log-in/Log-in";
 
 export default function Page() {
-  return <div>Login</div>;
+  return (
+  <main>
+    <LoginForm/>
+  </main>
+  );
 }
