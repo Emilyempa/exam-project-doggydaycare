@@ -21,7 +21,7 @@ export default function Hero() {
           text-sm font-medium
           transition
           hover:bg-white
-          hover:border-[#5A9690]
+          hover:border-primary
           "
         >
           Log In

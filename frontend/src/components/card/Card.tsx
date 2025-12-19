@@ -19,6 +19,8 @@ export const Card: React.FC<Card> = ({ icon: Icon, title, description, children,
           <Icon
             className="w-12 h-12"
             style={{color: '#5A9690'}}
+            aria-hidden="true"
+            focusable="false"
           />
         </div>
       )}

@@ -12,22 +12,44 @@ export const LoginForm = () => {
     >
       <form method="POST" action="/login" className="space-y-4">
         <div>
-          <label>Email</label>
+          <label htmlFor="email">Email</label>
           <input
             name="username"
             type="text"
             required
-            className="w-full input"
+            className="
+              w-full
+              border
+              border-primary
+              rounded-md
+              px-3
+              py-2
+              focus:outline-none
+              focus:ring-2
+              focus:ring-primary
+              focus:border-primary
+            "
           />
         </div>
 
         <div>
-          <label>Password</label>
+          <label htmlFor="password">Password</label>
           <input
             name="password"
-            type="password"
+            type="text"
             required
-            className="w-full input"
+            className="
+              w-full
+              border
+              border-primary
+              rounded-md
+              px-3
+              py-2
+              focus:outline-none
+              focus:ring-2
+              focus:ring-primary
+              focus:border-primary
+            "
           />
         </div>
 
