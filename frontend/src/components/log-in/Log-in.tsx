@@ -8,8 +8,8 @@ export const LoginForm = () => {
     <Card className="card-md"
       icon={CircleUserRound}
       title="Log in"
-      description="Use your credentials to log in"
     >
+      <p className={"p-2 mb-6"}>Use your credentials to log in</p>
       <form method="POST" action="/login" className="space-y-4">
         <div>
           <label htmlFor="email">Email</label>
@@ -22,6 +22,7 @@ export const LoginForm = () => {
               border
               border-primary
               rounded-md
+              mb-4
               px-3
               py-2
               focus:outline-none
@@ -43,6 +44,7 @@ export const LoginForm = () => {
               border
               border-primary
               rounded-md
+              mb-6
               px-3
               py-2
               focus:outline-none
@@ -53,7 +55,7 @@ export const LoginForm = () => {
           />
         </div>
 
-        <button type="submit" className="btn-primary w-full">
+        <button type="submit" className="btn-primary w-full mb-8">
           Log in
         </button>
         <a href={"#"}>
