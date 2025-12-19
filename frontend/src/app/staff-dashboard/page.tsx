@@ -1,5 +1,9 @@
-"use client"
+import {Header} from "@/components/header/Header";
 
 export default function Page() {
-  return <div>Staff</div>;
+  return (
+    <main>
+      <Header title="Staff Dashboard"/>
+    </main>
+  );
 }
