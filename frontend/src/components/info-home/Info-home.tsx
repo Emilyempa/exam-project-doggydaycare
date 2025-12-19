@@ -2,7 +2,7 @@ import {Card} from "@/components/card/Card";
 
 export default function InfoHome() {
   return(
-    <section>
+    <section className={"flex flex-col items-center "}>
       <h2 className={"text-3xl font-bold mt-10 mb-5"}>Why Choose Doggy Daycare?</h2>
       <p className={"text-lg"}>We provide a safe, fun, and loving environment where your furry friends can play, </p>
       <p className={"text-lg"}>socialize, and receive the care they deserve while you are working.</p>
