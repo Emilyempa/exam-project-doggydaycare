@@ -120,3 +120,42 @@ button:hover {
 .footer {
   background: var(--color-bg-secondary);
 }
+
+/* Input fields */
+.input {
+  width: 100%;
+  border: 1px solid var(--color-brand-primary);
+  border-radius: 8px;
+  padding: 0.5rem 0.75rem;
+  margin-bottom: 1rem;
+  color: var(--color-text);
+  font-size: 1rem;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.input:focus {
+  outline: none;
+  border-color: var(--color-brand-secondary);
+  box-shadow: 0 0 0 2px var(--color-brand-secondary);
+}
+
+/* Sizes */
+.input-sm {
+  padding: 0.25rem 0.5rem;
+  font-size: 0.875rem;
+}
+
+.input-lg {
+  padding: 0.75rem 1rem;
+  font-size: 1.125rem;
+}
+
+/* Disabled state */
+.input:disabled {
+  background: var(--color-bg-secondary);
+  color: var(--color-text-muted);
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+
