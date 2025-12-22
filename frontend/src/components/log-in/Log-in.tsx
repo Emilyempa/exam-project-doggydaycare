@@ -5,7 +5,7 @@ export const LoginForm = () => {
   return (
     <section className={"flex flex-col items-center text-center"}>
       <a href={"/home"} className={"p-4 text-xl font-medium "}>Back to Home page</a>
-    <Card className="card-md"
+    <Card className="card-lg"
       icon={CircleUserRound}
       title="Log in"
     >

@@ -99,6 +99,9 @@ button:hover {
 .card-md { width: 27rem; height: auto; }
 .card-lg { width: 40rem; height: auto; }
 
+@media (max-width: 640px) { .card-md { width: 20rem; } }
+@media (max-width: 640px) { .card-lg { width: 20rem; } }
+
 /* Background utilities */
 .bg-primary { background: var(--color-bg-primary); }
 .bg-secondary { background: var(--color-bg-secondary); }
