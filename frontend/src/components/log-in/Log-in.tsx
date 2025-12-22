@@ -19,7 +19,7 @@ export const LoginForm = () => {
       >
         <p className="p-2 mb-6">Use your credentials to log in</p>
 
-        <form method="POST" action="/login" className="space-y-4">
+        <form method="POST" action="/api/v1/auth/login" className="space-y-4">
 
           <div>
             <label htmlFor="email">Email</label>
