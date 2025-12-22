@@ -2,14 +2,14 @@
 
 import Hero from "@/components/hero/Hero";
 import GetInTouch from "@/components/get-in-touch/Get-in-touch";
-import InfoHome from "@/components/info-home/Info-home";
+import InfoFooter from "@/components/info-home/Info-footer";
 
 
 export default function Page() {
   return (
     <main>
       <Hero />
-      <InfoHome/>
+      <InfoFooter/>
       <GetInTouch />
     </main>
   );

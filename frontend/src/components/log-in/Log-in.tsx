@@ -29,17 +29,7 @@ export const LoginForm = () => {
               type="email"
               required
               className="
-                w-full
-                border
-                border-primary
-                rounded-md
-                mb-4
-                px-3
-                py-2
-                focus:outline-none
-                focus:ring-2
-                focus:ring-primary
-                focus:border-primary
+                input
               "
             />
           </div>

@@ -1,7 +1,7 @@
 import {Card} from "@/components/card/Card";
 import {Heart, Clock, Shield, Users} from 'lucide-react';
 
-export default function InfoHome() {
+export default function InfoFooter() {
   return(
     <section className="flex flex-col items-center text-center"  aria-labelledby="why-choose-heading">
 
