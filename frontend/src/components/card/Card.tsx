@@ -2,6 +2,7 @@ import React from "react";
 import { LucideIcon } from "lucide-react";
 
 interface Card {
+  id?: string;
   icon?: LucideIcon,
   title: string;
   description?: string;
@@ -11,6 +12,7 @@ interface Card {
 }
 
 export const Card: React.FC<Card> = ({
+                                       id,
                                        icon: Icon,
                                        title,
                                        description,
@@ -19,7 +21,7 @@ export const Card: React.FC<Card> = ({
                                        className
 }) => {
   return (
-    <article className={`card ${className ?? ""}`}>
+    <article id={id} className={`card ${className ?? ""}`}>
       {/* Icon */}
       {Icon && (
         <div className="flex justify-center mb-4">
