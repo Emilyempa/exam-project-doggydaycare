@@ -34,7 +34,7 @@ export default function EditDeleteDogOwner() {
               key={owner.id}
               className="bg-feature-primary rounded-lg p-5 border border-gray-200 hover:shadow-md transition-shadow"
             >
-              <div className="flex justify-between items-start gap-4">
+              <div  className="flex flex-col sm:flex-row justify-between items-start gap-4">
                 <div className="flex-1 text-left space-y-3">
                   <h3 className="text-lg font-bold text-brand-secondary">
                     {owner.fullname}
@@ -68,16 +68,16 @@ export default function EditDeleteDogOwner() {
                   </div>
                 </div>
 
-                <div className="flex gap-2 flex-shrink-0">
+                <div className="flex gap-8 p-3 flex-shrink-0">
                   <button
-                    className="p-2 hover:bg-blue-100 rounded-lg transition-colors group"
+                    className="p-2 hover:bg-blue-100 rounded-lg"
                     aria-label="Edit dog owner"
                   >
                     <Pencil size={20} className="btn-icon" />
                   </button>
 
                   <button
-                    className="p-2 hover:bg-red-100 rounded-lg transition-colors group"
+                    className="p-2 hover:bg-red-100 rounded-lg"
                     aria-label="Delete dog owner"
                   >
                     <Trash2 size={20} className="btn-icon" />
