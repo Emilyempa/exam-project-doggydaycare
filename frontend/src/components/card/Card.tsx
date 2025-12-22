@@ -10,9 +10,16 @@ interface Card {
   className?: string;
 }
 
-export const Card: React.FC<Card> = ({ icon: Icon, title, description, children, actions, className }) => {
+export const Card: React.FC<Card> = ({
+                                       icon: Icon,
+                                       title,
+                                       description,
+                                       children,
+                                       actions,
+                                       className
+}) => {
   return (
-    <div className={`card ${className ?? ""}`}>
+    <article className={`card ${className ?? ""}`}>
       {/* Icon */}
       {Icon && (
         <div className="flex justify-center mb-4">
@@ -33,11 +40,11 @@ export const Card: React.FC<Card> = ({ icon: Icon, title, description, children,
             <p className="text-sm text-center">{description}</p>
           )}
         </div>
-        {actions && <div>{actions}</div>}
+        {actions && <div aria-label="card actions">{actions}</div>}
       </div>
 
       {/* Content */}
       <div className="mt-2">{children}</div>
-    </div>
+    </article>
   );
 };
