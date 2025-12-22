@@ -11,8 +11,8 @@
   --color-bg-primary: #E5E0E0;
 
   /* Brand colors */
-  --color-primary: #5A9690;
-  --color-secondary: #2F5755;
+  --color-brand-primary: #5A9690;
+  --color-brand-secondary: #2F5755;
 
   /* Text */
   --color-text: #2F5755;
@@ -22,10 +22,10 @@
 @media (prefers-color-scheme: dark) {
   :root {
     --color-feature-secondary-bg: #2F5755;
-    --color-feature-primary-bg: #5A9690;
+    --color-feature-primary-bg: #1a3332;
 
-    --color-bg-secondary: #2F5755;
-    --color-bg-primary: #5A9690;
+    --color-bg-secondary: #1a3332;
+    --color-bg-primary: #2F5755;
 
     --color-text: #FDFAF6;
     --color-text-muted: #E0D9D9;
@@ -33,9 +33,9 @@
 }
 
 /* Base reset */
-*,
-*::before,
-*::after { box-sizing: border-box; }
+*, *::before, *::after {
+  box-sizing: border-box;
+}
 
 html, body {
   height: 100%;
@@ -50,12 +50,12 @@ body {
 
 /* Links */
 a {
-  color: var(--color-primary);
+  color: var(--color-brand-primary);
   text-decoration: none;
 }
-a:hover,
-a:focus-visible {
-  color: var(--color-secondary);
+
+a:hover, a:focus-visible {
+  color: var(--color-brand-secondary);
   text-decoration: none;
   outline: none;
 }
@@ -64,22 +64,26 @@ a:focus-visible {
 button {
   font: inherit;
   color: #fff;
-  background: var(--color-primary);
+  background: var(--color-brand-primary);
   border: none;
   border-radius: 6px;
   padding: 0.5rem 1rem;
   cursor: pointer;
 }
+
 button.secondary {
-  background: var(--color-secondary);
+  background: var(--color-brand-secondary);
 }
-button:hover { filter: brightness(1.1); }
+
+button:hover {
+  filter: brightness(1.1);
+}
 
 /* Cards / surfaces */
 .card {
   background: var(--color-feature-primary-bg);
   border: 3px solid var(--color-bg-secondary);
-  border-radius: 8px;
+  border-radius: 29px;
   padding: 4rem;
   margin: 2rem;
   color: var(--color-text);
@@ -91,30 +95,25 @@ button:hover { filter: brightness(1.1); }
   text-align: center;
 }
 
-.card-sm {
-  width: 20rem;
-  height: auto;
-}
+.card-sm { width: 20rem; height: auto; }
+.card-md { width: 27rem; height: auto; }
+.card-lg { width: 40rem; height: auto; }
 
-.card-md {
-  width: 27rem;
-  height: auto;
-}
-
-.card-lg {
-  width: 40rem;
-  height: auto;
-}
-
-/* Utilities */
-.text-muted { color: var(--color-text-muted); }
+/* Background utilities */
 .bg-primary { background: var(--color-bg-primary); }
 .bg-secondary { background: var(--color-bg-secondary); }
 .bg-feature-primary { background: var(--color-feature-primary-bg); }
 .bg-feature-secondary { background: var(--color-feature-secondary-bg); }
+.bg-brand-primary { background: var(--color-brand-primary); }
+.bg-brand-secondary { background: var(--color-brand-secondary); }
+
+/* Text utilities */
+.text-muted { color: var(--color-text-muted); }
+.text-brand-primary { color: var(--color-brand-primary); }
+.text-brand-secondary { color: var(--color-brand-secondary); }
+.text-beige-light { color: #FDFAF6; }
+.text-beige { color: #FAF4F4; }
 
 .footer {
   background: var(--color-bg-secondary);
-
 }
-

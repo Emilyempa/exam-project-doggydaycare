@@ -1,3 +1,6 @@
+import Link from "next/link";
+import React from "react";
+
 interface HeaderProps {
   title: string;
 }
@@ -8,12 +11,12 @@ export const Header: React.FC<HeaderProps> = ({ title }) => {
       className="
         relative
         w-full
-        h-16
-        bg-primary
-        text-white
+        h-40
+        text-beige-light
         shadow-md
         flex
         items-center
+        bg-brand-primary
       "
       role="banner"
     >
@@ -26,34 +29,39 @@ export const Header: React.FC<HeaderProps> = ({ title }) => {
           items-center
           justify-center
           pointer-events-none
+          px-4
         "
-        aria-live="polite"
       >
-        <h1 className="text-lg font-semibold">
+        <h1 className="text-2xl font-semibold px-24 sm:px-32 text-center">
           {title}
         </h1>
       </div>
 
-      {/* Right: Logout */}
-      <div className="ml-auto pr-6">
-        <form method="POST" action="/logout">
-          <button
-            type="submit"
+      {/* Right top: Logout */}
+      <nav className="absolute top-6 right-6 z-20" aria-label="User navigation">
+          <Link
+            href="/logout"
             className="
-              pointer-events-auto
-              bg-transparent
-              text-white
-              font-medium
-              underline-offset-4
-              focus-visible:outline
-              focus-visible:outline-white
-              focus-visible:outline-offset-2
-            "
+          rounded-md
+          inline-block
+          border-2
+          border border-transparent
+          bg-feature-primary
+          px-4 py-2
+          text-xl
+          font-medium
+          transition
+          hover:bg-white
+          hover:border-brand-secondary
+          focus:outline-none
+          focus:ring-2
+          focus:ring-brand-secondary
+          focus:ring-offset-2
+          "
           >
-            Log out
-          </button>
-        </form>
-      </div>
+            Log Out
+          </Link>
+      </nav>
     </header>
   );
 };
