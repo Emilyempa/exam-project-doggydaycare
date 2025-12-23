@@ -125,7 +125,7 @@ export default function DogAttendance() {
                       {isOpen ? <X size={20} /> : <Info size={20} />}
                     </button>
 
-                    {/* OWNER INFO – ACCORDION */}
+                    {/* Owner info */}
                     <div
                       className={`overflow-hidden transition-all duration-300 ease-in-out ${
                         isOpen ? "max-h-96 mt-8" : "max-h-0"
