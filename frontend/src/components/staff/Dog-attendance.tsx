@@ -78,7 +78,10 @@ export default function DogAttendance() {
 
   return (
     <section className="flex flex-col items-center text-center">
-      <Card title="Dog Schedule" icon={CalendarCheck2} className="card-lg">
+      <Card
+        title="Dog Schedule"
+        icon={CalendarCheck2}
+        className="card-lg">
         {/* View toggle */}
         <div className="flex gap-4 m-6 justify-center">
           <button
