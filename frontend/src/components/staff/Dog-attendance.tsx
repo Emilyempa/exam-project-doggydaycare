@@ -80,22 +80,23 @@ export default function DogAttendance() {
     <section className="flex flex-col items-center text-center">
       <Card title="Dog Schedule" icon={CalendarCheck2} className="card-lg">
         {/* View toggle */}
-        <div className="flex gap-3 m-6 justify-center">
+        <div className="flex gap-4 m-6 justify-center">
           <button
-            className={view === "day" ? "btn-primary" : "bg-secondary text-brand-secondary"}
+            className={view === "day" ? "button" : "bg-secondary text-brand-secondary"}
             onClick={() => setView("day")}
           >
             Day view
           </button>
           <button
-            className={view === "week" ? "btn-primary" : "bg-secondary text-brand-secondary"}
+            className={view === "week" ? "button" : "bg-secondary text-brand-secondary"}
             onClick={() => setView("week")}
           >
             Week view
           </button>
         </div>
 
-        {view === "day" ? (
+        {/* ===== Day View ===== */}
+        {view === "day" && (
           <>
             {/* Checked-in summary */}
             <div className="mb-4 p-3 bg-brand-secondary rounded-lg">
@@ -126,13 +127,9 @@ export default function DogAttendance() {
 
                     {/* OWNER INFO – ACCORDION */}
                     <div
-                      className={`
-                        overflow-hidden
-                        transition-all
-                        duration-300
-                        ease-in-out
-                        ${isOpen ? "max-h-96 mt-4 mt-10" : "max-h-0"}
-                      `}
+                      className={`overflow-hidden transition-all duration-300 ease-in-out ${
+                        isOpen ? "max-h-96 mt-8" : "max-h-0"
+                      }`}
                     >
                       <div className="rounded-2xl border bg-feature-secondary shadow-lg p-4 text-left">
                         <h3 className="font-semibold text-lg mb-2">
@@ -178,48 +175,89 @@ export default function DogAttendance() {
               })}
             </div>
           </>
-        ) : (
-          /* Week view */
-          <div className="overflow-x-auto">
-            <table className="w-full border-collapse">
-              <thead>
-              <tr>
-                <th className="border p-3 bg-brand-secondary text-beige-light text-left">
-                  Dog
-                </th>
-                {weekDays.map(day => (
-                  <th
-                    key={day}
-                    className="border p-3 bg-brand-secondary text-beige-light"
-                  >
-                    {day}
+        )}
+
+        {/* ===== Week View ===== */}
+        {view === "week" && (
+          <>
+            {/* Desktop Table */}
+            <div className="hidden md:block overflow-x-auto">
+              <table className="w-full border-collapse">
+                <thead>
+                <tr>
+                  <th className="border p-3 bg-brand-secondary text-beige-light font-bold text-left">
+                    Dog
                   </th>
-                ))}
-              </tr>
-              </thead>
-              <tbody>
-              {dogs.map(dog => (
-                <tr key={dog.id}>
-                  <td className="border p-3 bg-feature-primary font-semibold">
-                    <div>{dog.name}</div>
-                    <div className="text-sm text-gray-600">{dog.breed}</div>
-                  </td>
                   {weekDays.map(day => (
-                    <td key={day} className="border p-3 text-center bg-feature-primary">
-                      {dog.schedule.includes(day) ? (
-                        <span className="bg-brand-secondary text-beige-light px-2 py-1 rounded text-sm">
-                            {dog.startTime} – {dog.endTime}
-                          </span>
-                      ) : (
-                        "-"
-                      )}
-                    </td>
+                    <th
+                      key={day}
+                      className="border border-gray-300 p-3 bg-brand-secondary text-beige-light font-bold text-center"
+                    >
+                      {day}
+                    </th>
                   ))}
                 </tr>
+                </thead>
+                <tbody>
+                {dogs.map(dog => (
+                  <tr key={dog.id} className="hover:bg-feature-secondary transition-colors">
+                    <td className="border border-secondary p-3 font-semibold text-left">
+                      <div>{dog.name}</div>
+                      <div className="text-sm text-gray-600">{dog.breed}</div>
+                    </td>
+
+                    {weekDays.map(day => {
+                      const isScheduled = dog.schedule.includes(day);
+                      return (
+                        <td
+                          key={day}
+                          className={`border border-secondary p-3 text-center ${
+                            isScheduled
+                              ? "bg-brand-primary text-beige-light font-medium"
+                              : "text-gray-400"
+                          }`}
+                        >
+                          {isScheduled ? `${dog.startTime} – ${dog.endTime}` : "—"}
+                        </td>
+                      );
+                    })}
+                  </tr>
+                ))}
+                </tbody>
+              </table>
+            </div>
+
+            {/* Mobile Week Cards */}
+            <div className="md:hidden space-y-4">
+              {dogs.map(dog => (
+                <div
+                  key={dog.id}
+                  className="bg-feature-primary rounded-lg shadow p-4 text-left"
+                >
+                  <h3 className="font-semibold text-lg">{dog.name}</h3>
+                  <p className="text-sm text-gray-600 mb-2">{dog.breed}</p>
+
+                  <ul className="space-y-1 text-sm">
+                    {weekDays.map(day => (
+                      <li
+                        key={day}
+                        className="flex justify-between border-b py-1"
+                      >
+                        <span className="font-medium">{day}</span>
+                        {dog.schedule.includes(day) ? (
+                          <span className="bg-brand-primary text-beige-light px-2 py-0.5 rounded text-xs">
+                            {dog.startTime} – {dog.endTime}
+                          </span>
+                        ) : (
+                          <span className="text-gray-400">—</span>
+                        )}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
               ))}
-              </tbody>
-            </table>
-          </div>
+            </div>
+          </>
         )}
       </Card>
     </section>
