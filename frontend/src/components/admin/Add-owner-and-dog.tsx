@@ -4,7 +4,7 @@ import {Card} from "@/components/card/Card";
 import {UserRoundPlus, Dog} from "lucide-react";
 import { useState} from "react";
 
-export default function AddDogOwner() {
+export default function AddOwnerAndDog() {
 
   const [userId, setUserId] = useState<string | null>(null);
 

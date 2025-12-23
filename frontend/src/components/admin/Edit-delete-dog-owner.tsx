@@ -70,17 +70,17 @@ export default function EditDeleteDogOwner() {
 
                 <div className="flex gap-8 p-3 flex-shrink-0">
                   <button
-                    className="p-2 hover:bg-blue-100 rounded-lg"
+                    className="p-2 rounded-lg"
                     aria-label="Edit dog owner"
                   >
-                    <Pencil size={20} className="btn-icon" />
+                    <Pencil size={20}/>
                   </button>
 
                   <button
-                    className="p-2 hover:bg-red-100 rounded-lg"
+                    className="p-2 rounded-lg"
                     aria-label="Delete dog owner"
                   >
-                    <Trash2 size={20} className="btn-icon" />
+                    <Trash2 size={20}/>
                   </button>
                 </div>
               </div>
