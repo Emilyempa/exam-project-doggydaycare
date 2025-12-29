@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Card } from "@/components/card/Card";
 import { CalendarCheck2, Info, X } from "lucide-react";
+import NextAndPrevious from "@/components/buttons/Next-and-previous";
 
 // =========================
 // Component: DogAttendance
@@ -14,6 +15,7 @@ export default function DogAttendance() {
   const [view, setView] = useState<"day" | "week">("day");
   const [openInfoDogId, setOpenInfoDogId] = useState<number | null>(null);
   const [checkedIn, setCheckedIn] = useState<string[]>([]);
+  const [pageIndex, setPageIndex] = useState(0);
 
   // Mock data (replace with backend data later)
   const dogs = [
@@ -62,6 +64,7 @@ export default function DogAttendance() {
   ];
 
   const weekDays = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
+  const maxIndex = view === "day" ? 13 : 7;
 
   // ---------- Handlers ----------
   const toggleInfo = (dogId: number) => {
@@ -97,6 +100,17 @@ export default function DogAttendance() {
             Week view
           </button>
         </div>
+        <NextAndPrevious
+          currentIndex={pageIndex}
+          maxIndex={maxIndex}
+          label={
+            view === "day"
+              ? `Day ${pageIndex + 1}`
+              : `Week ${pageIndex + 1}`
+          }
+          onPrevious={() => setPageIndex(prev => prev - 1)}
+          onNext={() => setPageIndex(prev => prev + 1)}
+        />
 
         {/* ===== Day View ===== */}
         {view === "day" && (
