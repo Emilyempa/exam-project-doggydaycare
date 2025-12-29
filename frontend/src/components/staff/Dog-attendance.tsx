@@ -83,6 +83,8 @@ export default function DogAttendance() {
   const year = format(currentDate, 'yyyy');
   const currentDayName = format(currentDate, 'EEEE');
   const currentDayFormatted = format(currentDate, 'EEEE, MMM d');
+  const currentDayIndex = currentDate.getTime();
+
 
   // Filter dogs for current day
   const dogsForToday = dogs.filter(dog => dog.schedule.includes(currentDayName));
@@ -141,8 +143,7 @@ export default function DogAttendance() {
         {/* Navigation */}
         {view === "day" ? (
           <NextAndPrevious
-            currentIndex={0}
-            maxIndex={365}
+            currentIndex={currentDayIndex}
             label={currentDayFormatted}
             onPrevious={goToPreviousDay}
             onNext={goToNextDay}
@@ -150,7 +151,6 @@ export default function DogAttendance() {
         ) : (
           <NextAndPrevious
             currentIndex={weekNumber}
-            maxIndex={52}
             label={`Week ${weekNumber}, ${year}`}
             onPrevious={goToPreviousWeek}
             onNext={goToNextWeek}
