@@ -78,7 +78,7 @@ function ScheduleTab() {
               disabled={!isBookable}
               className={`
                 w-full p-4 rounded-lg text-left transition-all
-                ${isSelected ? 'bg-brand-primary text-beige-light' : 'bg-feature-primary'}
+                ${isSelected ? 'bg-brand-primary text-beige-light' : 'bg-feature-primary text-brand-secondary'}
                 ${!isBookable ? 'opacity-50 cursor-not-allowed' : 'hover:bg-feature-secondary'}
               `}
             >
