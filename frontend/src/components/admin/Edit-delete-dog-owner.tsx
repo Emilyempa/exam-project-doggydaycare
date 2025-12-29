@@ -9,14 +9,21 @@ export default function EditDeleteDogOwner() {
       fullname: "Ove Lindström",
       email: "ove@example.com",
       phone: "070-123 45 67",
-      dogs: ["Bella", "Max"]
+      dogs: [
+        { id: 101, name: "Bella" },
+        { id: 102, name: "Max" }
+      ]
     },
     {
       id: 2,
       fullname: "Anna Bergqvist",
       email: "anna.bergqvist@mail.se",
       phone: "073-987 65 43",
-      dogs: ["Molly", "Charlie", "Luna"]
+      dogs: [
+        { id:103, name: "Molly"},
+        { id: 104, name: "Charlie"},
+        {id: 105, name: "Luna"}
+  ]
     }
   ];
 
@@ -56,12 +63,12 @@ export default function EditDeleteDogOwner() {
                       Dogs:
                     </p>
                     <div className="flex flex-wrap gap-2">
-                      {owner.dogs.map((dog, idx) => (
+                      {owner.dogs.map((dog) => (
                         <span
-                          key={idx}
+                          key={dog.id}
                           className="inline-block bg-brand-secondary text-beige-light px-3 py-1 rounded-full text-sm font-medium"
                         >
-                          {dog}
+                          {dog.name}
                         </span>
                       ))}
                     </div>
