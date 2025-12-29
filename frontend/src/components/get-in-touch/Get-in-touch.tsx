@@ -34,7 +34,7 @@ export default function GetInTouch() {
         title="Business Hours"
         className="card-md"
       >
-        <p>Monday - Friday 6:00 AM - 8:00 PM</p>
+        <p>Monday - Friday 6:00  - 18:00</p>
         <p>Saturday - Sunday Closed</p>
       </Card>
     </footer>
