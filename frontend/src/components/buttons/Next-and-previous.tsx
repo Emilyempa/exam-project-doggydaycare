@@ -4,7 +4,7 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 
 interface NextAndPreviousProps {
   currentIndex: number;
-  maxIndex: number;
+  maxIndex?: number;
   onPrevious: () => void;
   onNext: () => void;
   label?: string; // t.ex. "Vecka 3" eller "2025-01-12"
