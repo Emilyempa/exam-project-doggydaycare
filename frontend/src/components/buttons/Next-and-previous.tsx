@@ -27,7 +27,7 @@ export default function NextAndPrevious({
         onClick={onPrevious}
         disabled={isFirst}
         className={`
-          flex items-center gap-1 rounded-md px-3 py-2 text-sm font-medium mb-5
+          flex items-center gap-1 rounded-md px-3 py-2 text-sm font-medium mb-5 mt-5
           transition
           ${
           isFirst
@@ -43,7 +43,7 @@ export default function NextAndPrevious({
 
       {/* Center label */}
       {label && (
-        <span className="text-sm font-semibold text-primary mb-5">
+        <span className="text-sm font-semibold text-primary mb-5 mt-5">
           {label}
         </span>
       )}
@@ -53,7 +53,7 @@ export default function NextAndPrevious({
         onClick={onNext}
         disabled={isLast}
         className={`
-          flex items-center gap-1 rounded-md px-3 py-2 text-sm font-medium mb-5
+          flex items-center gap-1 rounded-md px-3 py-2 text-sm font-medium mb-5 mt-5
           transition
           ${
           isLast
