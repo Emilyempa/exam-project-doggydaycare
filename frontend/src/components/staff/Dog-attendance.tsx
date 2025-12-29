@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Card } from "@/components/card/Card";
 import { CalendarCheck2, Info, X } from "lucide-react";
 import NextAndPrevious from "@/components/buttons/Next-and-previous";
+import { format, startOfWeek, addDays, addWeeks } from 'date-fns';
 
 // =========================
 // Component: DogAttendance
@@ -15,7 +16,7 @@ export default function DogAttendance() {
   const [view, setView] = useState<"day" | "week">("day");
   const [openInfoDogId, setOpenInfoDogId] = useState<number | null>(null);
   const [checkedIn, setCheckedIn] = useState<string[]>([]);
-  const [pageIndex, setPageIndex] = useState(0);
+  const [currentDate, setCurrentDate] = useState(new Date());
 
   // Mock data (replace with backend data later)
   const dogs = [
@@ -63,8 +64,28 @@ export default function DogAttendance() {
     }
   ];
 
-  const weekDays = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
-  const maxIndex = view === "day" ? 13 : 7;
+  // Get current week days
+  const getWeekDays = () => {
+    const start = startOfWeek(currentDate, { weekStartsOn: 1 }); // Monday = 1
+    return Array.from({ length: 5 }, (_, i) => { // Only weekdays (Mon-Fri)
+      const date = addDays(start, i);
+      return {
+        date,
+        dayName: format(date, 'EEEE'), // Monday, Tuesday, etc.
+        shortDate: format(date, 'MMM d'), // Dec 30
+        dateStr: format(date, 'yyyy-MM-dd')
+      };
+    });
+  };
+
+  const weekDays = getWeekDays();
+  const weekNumber = Number.parseInt(format(currentDate, 'I'));
+  const year = format(currentDate, 'yyyy');
+  const currentDayName = format(currentDate, 'EEEE');
+  const currentDayFormatted = format(currentDate, 'EEEE, MMM d');
+
+  // Filter dogs for current day
+  const dogsForToday = dogs.filter(dog => dog.schedule.includes(currentDayName));
 
   // ---------- Handlers ----------
   const toggleInfo = (dogId: number) => {
@@ -77,6 +98,22 @@ export default function DogAttendance() {
         ? prev.filter(name => name !== dogName)
         : [...prev, dogName]
     );
+  };
+
+  const goToNextDay = () => {
+    setCurrentDate(prev => addDays(prev, 1));
+  };
+
+  const goToPreviousDay = () => {
+    setCurrentDate(prev => addDays(prev, -1));
+  };
+
+  const goToNextWeek = () => {
+    setCurrentDate(prev => addWeeks(prev, 1));
+  };
+
+  const goToPreviousWeek = () => {
+    setCurrentDate(prev => addWeeks(prev, -1));
   };
 
   return (
@@ -100,17 +137,25 @@ export default function DogAttendance() {
             Week view
           </button>
         </div>
-        <NextAndPrevious
-          currentIndex={pageIndex}
-          maxIndex={maxIndex}
-          label={
-            view === "day"
-              ? `Day ${pageIndex + 1}`
-              : `Week ${pageIndex + 1}`
-          }
-          onPrevious={() => setPageIndex(prev => prev - 1)}
-          onNext={() => setPageIndex(prev => prev + 1)}
-        />
+
+        {/* Navigation */}
+        {view === "day" ? (
+          <NextAndPrevious
+            currentIndex={0}
+            maxIndex={365}
+            label={currentDayFormatted}
+            onPrevious={goToPreviousDay}
+            onNext={goToNextDay}
+          />
+        ) : (
+          <NextAndPrevious
+            currentIndex={weekNumber}
+            maxIndex={52}
+            label={`Week ${weekNumber}, ${year}`}
+            onPrevious={goToPreviousWeek}
+            onNext={goToNextWeek}
+          />
+        )}
 
         {/* ===== Day View ===== */}
         {view === "day" && (
@@ -118,79 +163,85 @@ export default function DogAttendance() {
             {/* Checked-in summary */}
             <div className="mb-4 p-3 bg-brand-secondary rounded-lg">
               <p className="text-lg font-semibold text-beige-light">
-                Checked in dogs: {checkedIn.length} / {dogs.length}
+                Checked in dogs: {checkedIn.length} / {dogsForToday.length}
               </p>
             </div>
 
             {/* Dog cards */}
-            <div className="space-y-4">
-              {dogs.map(dog => {
-                const isCheckedIn = checkedIn.includes(dog.name);
-                const isOpen = openInfoDogId === dog.id;
+            {dogsForToday.length === 0 ? (
+              <div className="p-8 text-gray-500">
+                <p>No dogs scheduled for {currentDayName}</p>
+              </div>
+            ) : (
+              <div className="space-y-4">
+                {dogsForToday.map(dog => {
+                  const isCheckedIn = checkedIn.includes(dog.name);
+                  const isOpen = openInfoDogId === dog.id;
 
-                return (
-                  <article
-                    key={dog.id}
-                    className="relative bg-feature-primary p-4 rounded-lg shadow-lg border"
-                  >
-                    {/* Toggle owner info */}
-                    <button
-                      onClick={() => toggleInfo(dog.id)}
-                      className="absolute top-2 right-2 p-2 rounded-lg hover:bg-feature-secondary"
-                      aria-label="Toggle owner info"
+                  return (
+                    <article
+                      key={dog.id}
+                      className="relative bg-feature-primary p-4 rounded-lg shadow-lg border"
                     >
-                      {isOpen ? <X size={20} /> : <Info size={20} />}
-                    </button>
+                      {/* Toggle owner info */}
+                      <button
+                        onClick={() => toggleInfo(dog.id)}
+                        className="absolute top-2 right-2 p-2 rounded-lg hover:bg-feature-secondary"
+                        aria-label="Toggle owner info"
+                      >
+                        {isOpen ? <X size={20} /> : <Info size={20} />}
+                      </button>
 
-                    {/* Owner info */}
-                    <div
-                      className={`overflow-hidden transition-all duration-300 ease-in-out ${
-                        isOpen ? "max-h-96 mt-8" : "max-h-0"
-                      }`}
-                    >
-                      <div className="rounded-2xl border bg-feature-secondary shadow-lg p-4 text-left">
-                        <h3 className="font-semibold text-lg mb-2">
-                          Dog owner info
-                        </h3>
+                      {/* Owner info */}
+                      <div
+                        className={`overflow-hidden transition-all duration-300 ease-in-out ${
+                          isOpen ? "max-h-96 mt-8" : "max-h-0"
+                        }`}
+                      >
+                        <div className="rounded-2xl border bg-feature-secondary shadow-lg p-4 text-left">
+                          <h3 className="font-semibold text-lg mb-2">
+                            Dog owner info
+                          </h3>
 
-                        <ul className="space-y-1 text-sm">
-                          <li>
-                            <strong>Name:</strong> {dog.owner.name}
-                          </li>
-                          <li>
-                            <strong>Phone:</strong> {dog.owner.phone}
-                          </li>
-                          <li>
-                            <strong>Emergency:</strong> {dog.owner.emergencyContact}
-                          </li>
-                          <li>
-                            <strong>Extra info:</strong> {dog.owner.notes}
-                          </li>
-                        </ul>
+                          <ul className="space-y-1 text-sm">
+                            <li>
+                              <strong>Name:</strong> {dog.owner.name}
+                            </li>
+                            <li>
+                              <strong>Phone:</strong> {dog.owner.phone}
+                            </li>
+                            <li>
+                              <strong>Emergency:</strong> {dog.owner.emergencyContact}
+                            </li>
+                            <li>
+                              <strong>Extra info:</strong> {dog.owner.notes}
+                            </li>
+                          </ul>
+                        </div>
                       </div>
-                    </div>
 
-                    {/* Main dog info */}
-                    <h2 className="text-lg font-bold pt-10">{dog.name}</h2>
-                    <p className="p-2 text-lg">{dog.breed}</p>
-                    <p className="p-2 font-bold text-xl">
-                      {dog.startTime} – {dog.endTime}
-                    </p>
+                      {/* Main dog info */}
+                      <h2 className="text-lg font-bold pt-10">{dog.name}</h2>
+                      <p className="p-2 text-lg">{dog.breed}</p>
+                      <p className="p-2 font-bold text-xl">
+                        {dog.startTime} – {dog.endTime}
+                      </p>
 
-                    <button
-                      className={`w-full mt-4 ${
-                        isCheckedIn
-                          ? "btn-primary"
-                          : "bg-secondary text-brand-secondary"
-                      }`}
-                      onClick={() => toggleCheckIn(dog.name)}
-                    >
-                      {isCheckedIn ? "Check out" : "Check in"}
-                    </button>
-                  </article>
-                );
-              })}
-            </div>
+                      <button
+                        className={`w-full mt-4 ${
+                          isCheckedIn
+                            ? "btn-primary"
+                            : "bg-secondary text-brand-secondary"
+                        }`}
+                        onClick={() => toggleCheckIn(dog.name)}
+                      >
+                        {isCheckedIn ? "Check out" : "Check in"}
+                      </button>
+                    </article>
+                  );
+                })}
+              </div>
+            )}
           </>
         )}
 
@@ -207,10 +258,11 @@ export default function DogAttendance() {
                   </th>
                   {weekDays.map(day => (
                     <th
-                      key={day}
+                      key={day.dateStr}
                       className="border border-gray-300 p-3 bg-brand-secondary text-beige-light font-bold text-center"
                     >
-                      {day}
+                      <div>{day.dayName}</div>
+                      <div className="text-xs font-normal">{day.shortDate}</div>
                     </th>
                   ))}
                 </tr>
@@ -224,10 +276,10 @@ export default function DogAttendance() {
                     </td>
 
                     {weekDays.map(day => {
-                      const isScheduled = dog.schedule.includes(day);
+                      const isScheduled = dog.schedule.includes(day.dayName);
                       return (
                         <td
-                          key={day}
+                          key={day.dateStr}
                           className={`border border-secondary p-3 text-center ${
                             isScheduled
                               ? "bg-brand-primary text-beige-light font-medium"
@@ -257,11 +309,14 @@ export default function DogAttendance() {
                   <ul className="space-y-1 text-sm">
                     {weekDays.map(day => (
                       <li
-                        key={day}
+                        key={day.dateStr}
                         className="flex justify-between border-b py-1"
                       >
-                        <span className="font-medium">{day}</span>
-                        {dog.schedule.includes(day) ? (
+                        <div>
+                          <span className="font-medium">{day.dayName}</span>
+                          <span className="text-xs text-gray-500 ml-2">{day.shortDate}</span>
+                        </div>
+                        {dog.schedule.includes(day.dayName) ? (
                           <span className="bg-brand-primary text-beige-light px-2 py-0.5 rounded text-xs">
                             {dog.startTime} – {dog.endTime}
                           </span>
