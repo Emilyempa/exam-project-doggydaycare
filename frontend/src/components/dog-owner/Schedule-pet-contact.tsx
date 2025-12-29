@@ -3,13 +3,26 @@
 import { useState } from "react";
 import { Card } from "@/components/card/Card";
 import { CalendarClock, Dog, User } from "lucide-react";
-import { format, startOfWeek, addDays, isWeekend } from 'date-fns';
+import { format, startOfWeek, addDays, isWeekend } from "date-fns";
 import NextAndPrevious from "@/components/buttons/Next-and-previous";
+
+/*
+  =========================
+  This type replaces string[] so each selected day
+  can store drop-off and pick-up times.
+  This structure is backend-ready.
+  =========================
+*/
+type DaySchedule = {
+  date: string;
+  dropOff: string;
+  pickUp: string;
+};
 
 // Separate for each tab
 function ScheduleTab() {
   const [currentDate, setCurrentDate] = useState(new Date());
-  const [selectedDays, setSelectedDays] = useState<string[]>([]);
+  const [selectedDays, setSelectedDays] = useState<DaySchedule[]>([]);
 
   // Get the week's days
   const getWeekDays = () => {
@@ -19,26 +32,48 @@ function ScheduleTab() {
       const date = addDays(start, i);
       return {
         date,
-        dayName: format(date, 'EEEE'), // Monday, Tuesday, etc.
-        dayNumber: format(date, 'd'),
-        fullDate: format(date, 'MMM d'), // Dec 30
-        dateStr: format(date, 'yyyy-MM-dd'),
-        isWeekend: isWeekend(date)
+        dayName: format(date, "EEEE"), // Monday, Tuesday, etc.
+        fullDate: format(date, "MMM d"), // Dec 30
+        dateStr: format(date, "yyyy-MM-dd"),
+        isWeekend: isWeekend(date),
       };
     });
   };
 
   const weekDays = getWeekDays();
-  const weekNumber = Number.parseInt(format(currentDate, 'I'));
-  const year = format(currentDate, 'yyyy');
+  const weekNumber = Number.parseInt(format(currentDate, "I"));
+  const year = format(currentDate, "yyyy");
 
   const handleDayToggle = (dateStr: string, isBookable: boolean) => {
     if (!isBookable) return;
 
-    setSelectedDays(prev =>
-      prev.includes(dateStr)
-        ? prev.filter(d => d !== dateStr)
-        : [...prev, dateStr]
+    setSelectedDays((prev) => {
+      const exists = prev.find((d) => d.date === dateStr);
+
+      if (exists) {
+        return prev.filter((d) => d.date !== dateStr);
+      }
+
+      return [
+        ...prev,
+        {
+          date: dateStr,
+          dropOff: "08:00",
+          pickUp: "16:00",
+        },
+      ];
+    });
+  };
+
+  const updateTime = (
+    date: string,
+    field: "dropOff" | "pickUp",
+    value: string
+  ) => {
+    setSelectedDays((prev) =>
+      prev.map((d) =>
+        d.date === date ? { ...d, [field]: value } : d
+      )
     );
   };
 
@@ -67,40 +102,99 @@ function ScheduleTab() {
 
       {/* Day selection */}
       <div className="space-y-2">
-        {weekDays.map(day => {
-          const isSelected = selectedDays.includes(day.dateStr);
-          const isBookable = !day.isWeekend; // Weekends not bookable
+        {weekDays.map((day) => {
+          const isBookable = !day.isWeekend;
+
+          const selectedDay = selectedDays.find(
+            (d) => d.date === day.dateStr
+          );
+          const isSelected = !!selectedDay;
 
           return (
-            <button
-              key={day.dateStr}
-              onClick={() => handleDayToggle(day.dateStr, isBookable)}
-              disabled={!isBookable}
-              className={`
-                w-full p-4 rounded-lg text-left transition-all
-                ${isSelected ? 'bg-brand-primary text-beige-light' : 'bg-feature-primary text-brand-secondary'}
-                ${!isBookable ? 'opacity-50 cursor-not-allowed' : 'hover:bg-feature-secondary'}
-              `}
-            >
-              <div className="flex justify-between items-center">
-                <div>
-                  <p className="font-semibold">{day.dayName}</p>
-                  <p className="text-sm">{day.fullDate}</p>
+            <div key={day.dateStr} className="space-y-2">
+              <button
+                onClick={() =>
+                  handleDayToggle(day.dateStr, isBookable)
+                }
+                disabled={!isBookable}
+                className={`
+                  w-full p-4 rounded-lg text-left transition-all
+                  ${
+                  isSelected
+                    ? "bg-brand-primary text-beige-light"
+                    : "bg-feature-primary text-brand-secondary"
+                }
+                  ${
+                  !isBookable
+                    ? "opacity-50 cursor-not-allowed"
+                    : "hover:bg-brand-secondary"
+                }
+                `}
+              >
+                <div className="flex justify-between items-center">
+                  <div>
+                    <p className="font-semibold">{day.dayName}</p>
+                    <p className="text-sm">{day.fullDate}</p>
+                  </div>
+                  <div>
+                    {!isBookable && (
+                      <span className="text-xs bg-red-100 text-red-800 px-2 py-1 rounded">
+                        Closed
+                      </span>
+                    )}
+                    {isSelected && isBookable && (
+                      <span className="text-xs bg-green-100 text-green-800 px-2 py-1 rounded">
+                        Selected
+                      </span>
+                    )}
+                  </div>
                 </div>
-                <div>
-                  {!isBookable && (
-                    <span className="text-xs bg-red-100 text-red-800 px-2 py-1 rounded">
-                      Not available
-                    </span>
-                  )}
-                  {isSelected && isBookable && (
-                    <span className="text-xs bg-green-100 text-green-800 px-2 py-1 rounded">
-                      Selected
-                    </span>
-                  )}
+              </button>
+
+              {isSelected && isBookable && (
+                <div className="grid grid-cols-2 gap-3 px-4">
+                  <div>
+                    <label htmlFor="Drop off time" className="block text-xs mb-1">
+                      Drop-off
+                    </label>
+                    <input
+                      type="time"
+                      min="06:00"
+                      max="18:00"
+                      value={selectedDay.dropOff}
+                      onChange={(e) =>
+                        updateTime(
+                          day.dateStr,
+                          "dropOff",
+                          e.target.value
+                        )
+                      }
+                      className="w-full rounded px-2 py-1"
+                    />
+                  </div>
+
+                  <div>
+                    <label htmlFor="Pick up time" className="block text-xs mb-1">
+                      Pick-up
+                    </label>
+                    <input
+                      type="time"
+                      min="06:00"
+                      max="18:00"
+                      value={selectedDay.pickUp}
+                      onChange={(e) =>
+                        updateTime(
+                          day.dateStr,
+                          "pickUp",
+                          e.target.value
+                        )
+                      }
+                      className="w-full rounded px-2 py-1"
+                    />
+                  </div>
                 </div>
-              </div>
-            </button>
+              )}
+            </div>
           );
         })}
       </div>
@@ -108,8 +202,23 @@ function ScheduleTab() {
       {/* Summary */}
       {selectedDays.length > 0 && (
         <div className="p-4 bg-brand-secondary text-beige-light rounded-lg">
-          <p className="font-semibold">Selected days: {selectedDays.length}</p>
-          <button className="mt-2 btn-primary w-full">
+          <p className="font-semibold">
+            Selected days: {selectedDays.length}
+          </p>
+
+          {/*
+            =========================
+            TEMP:
+            Console log instead of backend call.
+            Structure is already API-ready.
+            =========================
+          */}
+          <button
+            className="mt-2 btn-primary w-full"
+            onClick={() =>
+              console.log("Saved schedule:", selectedDays)
+            }
+          >
             Save schedule
           </button>
         </div>
@@ -145,22 +254,22 @@ export default function SchedulePetContact() {
       component: <ScheduleTab />,
       icon: CalendarClock,
       title: "Schedule",
-      description: "Add your dogs doggy daycare schedule here."
+      description: "Add your dogs doggy daycare schedule here.",
     },
     {
       label: "Dog Info",
       component: <DogInfoTab />,
       icon: Dog,
       title: "Dog Info",
-      description: "Check or edit your dog information here."
+      description: "Check or edit your dog information here.",
     },
     {
       label: "Contact Info",
       component: <ContactInfoTab />,
       icon: User,
       title: "Contact Info",
-      description: "Check or edit your contact information here"
-    }
+      description: "Check or edit your contact information here",
+    },
   ];
 
   const activeTab = tabs[activeIndex];
