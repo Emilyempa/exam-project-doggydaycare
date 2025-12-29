@@ -69,10 +69,13 @@ button {
   border-radius: 6px;
   padding: 0.5rem 1rem;
   cursor: pointer;
+  transition: 0.2s;
 }
 
 button.secondary {
-  background: var(--color-brand-secondary);
+  background: var(--color-feature-primary-bg);
+  color: var(--color-text);
+  border: 2px solid var(--color-brand-primary);
 }
 
 button:hover {
