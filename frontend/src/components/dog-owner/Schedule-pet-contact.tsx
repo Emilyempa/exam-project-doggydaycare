@@ -154,7 +154,7 @@ function ScheduleTab() {
               {isSelected && isBookable && (
                 <div className="grid grid-cols-2 gap-3 px-4">
                   <div>
-                    <label htmlFor="Drop off time" className="block text-xs mb-1">
+                    <label htmlFor="Drop off time" className="block text-sm mb-1">
                       Drop-off
                     </label>
                     <input
@@ -174,7 +174,7 @@ function ScheduleTab() {
                   </div>
 
                   <div>
-                    <label htmlFor="Pick up time" className="block text-xs mb-1">
+                    <label htmlFor="Pick up time" className="block text-sm mb-1">
                       Pick-up
                     </label>
                     <input
