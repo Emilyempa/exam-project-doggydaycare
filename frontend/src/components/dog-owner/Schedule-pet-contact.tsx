@@ -1,8 +1,6 @@
-// dog-owner/SchedulePetContact.tsx
-
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { Card } from "@/components/card/Card";
 import { CalendarClock, Dog, User } from "lucide-react";
 import ScheduleTab from "./tabs/Schedule-tab";
@@ -12,8 +10,7 @@ import ContactInfoTab from "./tabs/Contact-info-tab";
 export default function SchedulePetContact() {
   const [activeIndex, setActiveIndex] = useState(0);
 
-  /*  TABS  */
-  const tabs = [
+  const tabs = useMemo(() => [
     {
       label: "Schedule",
       component: <ScheduleTab />,
@@ -35,7 +32,7 @@ export default function SchedulePetContact() {
       title: "Contact Info",
       description: "Check or edit your contact information here",
     },
-  ];
+  ], []);
 
   const activeTab = tabs[activeIndex];
 
