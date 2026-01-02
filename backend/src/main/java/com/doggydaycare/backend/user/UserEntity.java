@@ -1,5 +1,6 @@
 package com.doggydaycare.backend.user;
 
+import com.doggydaycare.backend.dog.DogEntity;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.data.annotation.CreatedBy;
@@ -63,6 +64,9 @@ public class UserEntity {
 
     @Column(nullable = false)
     private boolean deleted = false;
+
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+    private final java.util.List<DogEntity> dogs = new java.util.ArrayList<>();
 
     /* =======================
        Audit fields
