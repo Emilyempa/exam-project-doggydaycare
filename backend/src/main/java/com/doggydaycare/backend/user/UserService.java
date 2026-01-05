@@ -111,6 +111,7 @@ public class UserService {
             user.getLastName(),
             user.getMobileNumber(),
             user.getEmergencyContact(),
+            user.getFullName(),
             user.getRole(),
             user.isEnabled()
         );

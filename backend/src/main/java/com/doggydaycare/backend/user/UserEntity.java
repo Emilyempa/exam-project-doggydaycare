@@ -71,6 +71,10 @@ public class UserEntity {
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
     private final List<DogEntity> dogs = new ArrayList<>();
 
+    public String getFullName() {
+        return firstName + " " + lastName;
+    }
+
     /* =======================
        Audit fields
        ======================= */
