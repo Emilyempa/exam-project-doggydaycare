@@ -12,14 +12,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
-import org.springframework.context.annotation.Profile;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
 @Component
-@Profile("dev")
 public class DevDataInitializer implements ApplicationRunner {
 
     private static final Logger LOG = LoggerFactory.getLogger(DevDataInitializer.class);
