@@ -1,0 +1,32 @@
+@baseUrl = http://localhost:8080/api/v1
+@userId = e9a25cd1-c9d8-49fe-a442-0b714eee66dc
+@dogId = 06806859-33e1-44fc-8f3c-a9172046f72f
+
+POST {{baseUrl}}/dogs
+Content-Type: application/json
+
+{
+  "name": "Gunner",
+  "age": 5,
+  "breed": "Golden retriever",
+  "dogInfo": "Loves long walks",
+  "userId": "{{userId}}"
+
+}
+
+###
+
+GET {{baseUrl}}/dogs/{{dogId}}
+
+###
+
+PUT {{baseUrl}}/dogs/{{dogId}}
+Content-Type: application/json
+
+{
+  "age": 11,
+  "breed": "Golden Retriever"
+}
+
+###
+DELETE {{baseUrl}}/dogs/{{dogId}}
