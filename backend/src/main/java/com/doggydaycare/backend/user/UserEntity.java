@@ -71,9 +71,7 @@ public class UserEntity {
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
     private final List<DogEntity> dogs = new ArrayList<>();
 
-    public String getFullName() {
-        return firstName + " " + lastName;
-    }
+
 
     /* =======================
        Audit fields
@@ -107,5 +105,13 @@ public class UserEntity {
     @Override
     public int hashCode() {
         return getClass().hashCode();
+    }
+
+      /* =======================
+       Extra business methods
+       ======================= */
+
+    public String getFullName() {
+        return firstName + " " + lastName;
     }
 }

@@ -109,9 +109,9 @@ public class UserService {
             user.getEmail(),
             user.getFirstName(),
             user.getLastName(),
+            user.getFullName(),
             user.getMobileNumber(),
             user.getEmergencyContact(),
-            user.getFullName(),
             user.getRole(),
             user.isEnabled()
         );
