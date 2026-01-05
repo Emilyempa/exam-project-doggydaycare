@@ -10,6 +10,8 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -65,8 +67,9 @@ public class UserEntity {
     @Column(nullable = false)
     private boolean deleted = false;
 
+    @Builder.Default
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
-    private final java.util.List<DogEntity> dogs = new java.util.ArrayList<>();
+    private final List<DogEntity> dogs = new ArrayList<>();
 
     /* =======================
        Audit fields
