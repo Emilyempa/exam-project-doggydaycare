@@ -1,0 +1,34 @@
+@baseUrl = http://localhost:8080/api/v1
+@userId = e9a25cd1-c9d8-49fe-a442-0b714eee66dc
+
+POST {{baseUrl}}/users
+Content-Type: application/json
+
+{
+  "email": "testuser@doggydaycare.com",
+  "password": "test123",
+  "firstName": "Test",
+  "lastName": "User",
+  "mobileNumber": "+46700000000",
+  "emergencyContact": "+46700000001",
+  "role": "OWNER"
+}
+
+###
+
+GET {{baseUrl}}/users/{{userId}}
+
+###
+
+PUT {{baseUrl}}/users/{{userId}}
+Content-Type: application/json
+
+{
+  "firstName": "Updated",
+  "enabled": false
+}
+
+###
+DELETE {{baseUrl}}/users/{{userId}}
+
+
