@@ -7,22 +7,30 @@ export interface Dog {
 
 export interface UserResponse {
   id: string; // UUID
+  firstName: string;
+  lastName: string;
   fullName: string;
   email: string;
   mobileNumber: string;
+  emergencyContact: string;
+  enabled: boolean;
   dogs?: Dog[];
 }
 
 export interface UserCreateRequest {
-  fullName: string;
+  firstName: string;
+  lastName: string;
   email: string;
   mobileNumber: string;
 }
 
 export interface UserUpdateRequest {
-  fullName?: string;
+  firstName?: string;
+  lastName?: string;
   email?: string;
   mobileNumber?: string;
+  emergencyContact?: string;
+  enabled: boolean;
 }
 
 export const userApi = {
