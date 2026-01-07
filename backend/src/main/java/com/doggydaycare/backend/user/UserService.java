@@ -51,7 +51,7 @@ public class UserService {
 
     @Transactional(readOnly = true)
     public List<UserResponse> getAll() {
-        return userRepository.findByDeletedFalse().stream()
+        return userRepository.findByRoleAndDeletedFalse(Role.OWNER).stream()
             .map(UserService::toResponse)
             .toList();
     }

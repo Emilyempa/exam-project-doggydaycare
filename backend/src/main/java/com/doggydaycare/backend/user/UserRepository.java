@@ -10,5 +10,7 @@ public interface UserRepository extends JpaRepository<UserEntity, UUID> {
 
     List<UserEntity> findByDeletedFalse();
 
+    List<UserEntity> findByRoleAndDeletedFalse(Role role);
+
     Optional<UserEntity> findByEmail(String email);
 }
