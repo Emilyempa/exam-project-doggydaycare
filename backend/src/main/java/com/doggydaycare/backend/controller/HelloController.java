@@ -4,7 +4,7 @@ import org.springframework.web.bind.annotation.*;
 // Marks this class as a REST controller (returns JSON responses instead of HTML)
 @RestController
 // Base path for all endpoints in this controller
-@RequestMapping("/api/v1/")
+@RequestMapping("/helloapi/v1/")
 // Allows CORS requests from the frontend (Next.js on localhost:3000)
 @CrossOrigin(origins = "http://localhost:3000")
 public class HelloController {

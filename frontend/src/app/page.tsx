@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { api, HelloResponse } from '@/lib/api';
+import { helloapi, HelloResponse } from '@/lib/helloapi';
 
 export default function Home() {
     const [helloData, setHelloData] = useState<HelloResponse | null>(null);
@@ -17,7 +17,7 @@ export default function Home() {
         try {
             setLoading(true);
             setError('');
-            const data = await api.getHello();
+            const data = await helloapi.getHello();
             setHelloData(data);
         } catch (err) {
             setError('Could not connect to backend! Is spring boot running?');
@@ -34,7 +34,7 @@ export default function Home() {
         try {
             setLoading(true);
             setError('');
-            const data = await api.getHelloName(name);
+            const data = await helloapi.getHelloName(name);
             setHelloData(data);
         } catch (err) {
             setError('Could not fetch data from backend');
