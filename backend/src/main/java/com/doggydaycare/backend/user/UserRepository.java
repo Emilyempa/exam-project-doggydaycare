@@ -8,7 +8,7 @@ import java.util.UUID;
 
 public interface UserRepository extends JpaRepository<UserEntity, UUID> {
 
-    List<UserEntity> findByIsDeletedFalse();
+    List<UserEntity> findByDeletedFalse();
 
     Optional<UserEntity> findByEmail(String email);
 }

@@ -51,7 +51,7 @@ public class UserService {
 
     @Transactional(readOnly = true)
     public List<UserResponse> getAll() {
-        return userRepository.findByIsDeletedFalse().stream()
+        return userRepository.findByDeletedFalse().stream()
             .map(UserService::toResponse)
             .toList();
     }
