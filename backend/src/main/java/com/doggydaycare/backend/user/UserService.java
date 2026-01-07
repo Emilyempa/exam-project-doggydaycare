@@ -100,6 +100,9 @@ public class UserService {
         if (request.lastName() != null) {
             user.setLastName(request.lastName());
         }
+        if (request.email() != null) {
+            user.setEmail(request.email());
+        }
         if (request.mobileNumber() != null) {
             user.setMobileNumber(request.mobileNumber());
         }
