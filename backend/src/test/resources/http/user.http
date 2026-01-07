@@ -20,9 +20,11 @@ GET {{baseUrl}}/users
 
 ###
 
+GET {{baseUrl}}/users/{{userId}}
+
 ###
 
-GET {{baseUrl}}/users/{{userId}}
+GET {{baseUrl}}/users/{{userId}}/dogs
 
 ###
 

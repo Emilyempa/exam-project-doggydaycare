@@ -1,5 +1,7 @@
 package com.doggydaycare.backend.user;
 
+import com.doggydaycare.backend.dog.DogResponse;
+import com.doggydaycare.backend.dog.DogService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -12,10 +14,14 @@ import java.util.UUID;
 public class UserController {
 
     private final UserService userService;
+    private final DogService dogService;
 
-    public UserController(UserService userService) {
+    public UserController(UserService userService, DogService dogService) {
+
         this.userService = userService;
+        this.dogService = dogService;
     }
+
 
     /* =======================
        Create
@@ -31,15 +37,23 @@ public class UserController {
        Read
        ======================= */
 
+    //Get a list of all users
     @GetMapping
     public List<UserResponse> getAll() {
         return userService.getAll();
     }
 
+    //Get a specific user by id
     @GetMapping("/{id}")
     public UserResponse getById(@PathVariable UUID id) {
+
         return userService.getById(id);
     }
+
+    //Get all dogs by user id to connect an owner and dogs
+    @GetMapping("/{userId}/dogs")
+    public List<DogResponse> getDogsByUserId(@PathVariable UUID userId) {
+        return dogService.getByUserId(userId); }
 
     /* =======================
        Update
