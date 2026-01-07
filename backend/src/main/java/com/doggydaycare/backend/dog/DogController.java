@@ -4,6 +4,7 @@ import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -29,6 +30,11 @@ public class DogController {
     /* =======================
        Read
        ======================= */
+
+    @GetMapping
+    public List<DogResponse> getAll() {
+        return dogService.getAll();
+    }
 
     @GetMapping("/{id}")
     public DogResponse getById(@PathVariable UUID id) {

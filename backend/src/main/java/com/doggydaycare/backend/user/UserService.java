@@ -4,6 +4,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -47,6 +48,13 @@ public class UserService {
     /* =======================
        Read
        ======================= */
+
+    @Transactional(readOnly = true)
+    public List<UserResponse> getAll() {
+        return userRepository.findByIsDeletedFalse().stream()
+            .map(UserService::toResponse)
+            .toList();
+    }
 
     @Transactional(readOnly = true)
     public UserResponse getById(UUID id) {
