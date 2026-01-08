@@ -35,7 +35,7 @@ export default function EditDeleteDogOwner() {
 
     globalThis.addEventListener('keydown', handleGlobalKeyDown);
     return () => globalThis.removeEventListener('keydown', handleGlobalKeyDown);
-  }, [ownerToEdit, isSaving, ownerToDelete, isDeleting]);
+  }, []);
 
   const fetchOwners = async () => {
     try {
@@ -287,7 +287,7 @@ export default function EditDeleteDogOwner() {
 
                   <button
                     onClick={() => setOwnerToDelete(owner)}
-                    className="p-2 rounded-lg hover:bg-red-50 text-red-600 transition-colors focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
+                    className="p-2 ml-4 rounded-lg hover:bg-red-50 text-red-600 transition-colors focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
                     aria-label={`Delete ${owner.fullName}`}
                   >
                     <Trash2 size={20} aria-hidden="true" />
@@ -315,7 +315,7 @@ export default function EditDeleteDogOwner() {
           />
           <dialog
             open
-            className="relative bg-white rounded-lg w-full max-w-sm sm:max-w-md p-4 sm:p-6 mx-4 shadow-lg text-left block"
+            className="relative bg-feature-primary rounded-lg w-full max-w-sm sm:max-w-md p-4 sm:p-6 mx-4 shadow-lg text-left block"
             aria-labelledby="edit-dialog-title"
           >
             <h2 id="edit-dialog-title" className="text-lg font-bold mb-4">
@@ -519,7 +519,7 @@ export default function EditDeleteDogOwner() {
           />
           <dialog
             open
-            className="relative bg-white rounded-lg w-full max-w-sm sm:max-w-md p-4 sm:p-6 mx-4 shadow-lg text-left block"
+            className="relative bg-feature-primary rounded-lg w-full max-w-sm sm:max-w-md p-4 sm:p-6 mx-4 shadow-lg text-left block"
             aria-labelledby="delete-dialog-title"
             aria-describedby="delete-dialog-description"
           >
