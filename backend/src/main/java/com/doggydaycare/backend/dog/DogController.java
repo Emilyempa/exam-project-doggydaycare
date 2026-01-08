@@ -17,10 +17,13 @@ public class DogController {
         this.dogService = dogService;
     }
 
-     /* =======================
+    /* =======================
        Create
        ======================= */
 
+    /**
+     * Creates a new dog.
+     */
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public DogResponse create(@Valid @RequestBody DogCreateRequest request) {
@@ -31,11 +34,17 @@ public class DogController {
        Read
        ======================= */
 
+    /**
+     * Returns all dogs.
+     */
     @GetMapping
     public List<DogResponse> getAll() {
         return dogService.getAll();
     }
 
+    /**
+     * Returns a single dog by id.
+     */
     @GetMapping("/{id}")
     public DogResponse getById(@PathVariable UUID id) {
         return dogService.getById(id);
@@ -45,6 +54,9 @@ public class DogController {
        Update
        ======================= */
 
+    /**
+     * Updates an existing dog.
+     */
     @PutMapping("/{id}")
     public DogResponse update(
         @PathVariable UUID id,
@@ -57,10 +69,12 @@ public class DogController {
        Delete (soft)
        ======================= */
 
+    /**
+     * Softly deletes a dog.
+     */
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable UUID id) {
         dogService.delete(id);
     }
 }
-

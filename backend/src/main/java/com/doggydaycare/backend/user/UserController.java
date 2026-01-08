@@ -17,16 +17,17 @@ public class UserController {
     private final DogService dogService;
 
     public UserController(UserService userService, DogService dogService) {
-
         this.userService = userService;
         this.dogService = dogService;
     }
-
 
     /* =======================
        Create
        ======================= */
 
+    /**
+     * Creates a new user.
+     */
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public UserResponse create(@Valid @RequestBody UserCreateRequest request) {
@@ -37,28 +38,37 @@ public class UserController {
        Read
        ======================= */
 
-    //Get a list of all users
+    /**
+     * Returns all users.
+     */
     @GetMapping
     public List<UserResponse> getAll() {
         return userService.getAll();
     }
 
-    //Get a specific user by id
+    /**
+     * Returns a single user by id.
+     */
     @GetMapping("/{id}")
     public UserResponse getById(@PathVariable UUID id) {
-
         return userService.getById(id);
     }
 
-    //Get all dogs by user id to connect an owner and dogs
+    /**
+     * Returns all dogs belonging to a specific user.
+     */
     @GetMapping("/{userId}/dogs")
     public List<DogResponse> getDogsByUserId(@PathVariable UUID userId) {
-        return dogService.getByUserId(userId); }
+        return dogService.getByUserId(userId);
+    }
 
     /* =======================
        Update
        ======================= */
 
+    /**
+     * Updates an existing user.
+     */
     @PutMapping("/{id}")
     public UserResponse update(
         @PathVariable UUID id,
@@ -71,6 +81,9 @@ public class UserController {
        Delete (soft)
        ======================= */
 
+    /**
+     * Soft deletes a user.
+     */
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable UUID id) {
