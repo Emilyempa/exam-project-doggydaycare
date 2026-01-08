@@ -1,0 +1,84 @@
+@baseUrl = http://localhost:8080/api/v1
+@bookingId = e2542527-dee1-42d8-a04c-352012d3b666
+@userId = eaa78da7-5461-417d-a9d8-d0ec1a4dea68
+@dogId = d50daa29-64c7-4744-a0e1-64a5e7e55683
+
+###
+# =======================
+# Create booking
+# =======================
+
+POST {{baseUrl}}/bookings
+Content-Type: application/json
+
+{
+  "dogId": "{{dogId}}",
+  "bookedById": "{{userId}}",
+  "date": "2026-01-10",
+  "expectedCheckInTime": "08:30",
+  "expectedCheckOutTime": "16:30",
+  "notes": "First daycare visit"
+}
+
+###
+# =======================
+# Read
+# =======================
+
+### Get all bookings
+GET {{baseUrl}}/bookings
+
+### Get booking by id
+GET {{baseUrl}}/bookings/{{bookingId}}
+
+### Get bookings by date
+GET {{baseUrl}}/bookings/date/2026-01-10
+
+### Get bookings by dog
+GET {{baseUrl}}/bookings/dog/{{dogId}}
+
+### Get bookings by user
+GET {{baseUrl}}/bookings/user/{{userId}}
+
+### Get bookings by status
+GET {{baseUrl}}/bookings/status/CONFIRMED
+
+###
+# =======================
+# Update booking
+# =======================
+
+PUT {{baseUrl}}/bookings/{{bookingId}}
+Content-Type: application/json
+
+{
+  "expectedCheckInTime": "09:00",
+  "expectedCheckOutTime": "17:00",
+  "notes": "Updated drop off and pickup time"
+}
+
+###
+# =======================
+# Check-in / Check-out
+# =======================
+
+### Check in
+POST {{baseUrl}}/bookings/{{bookingId}}/check-in
+
+### Check out
+POST {{baseUrl}}/bookings/{{bookingId}}/check-out
+
+###
+# =======================
+# Status changes
+# =======================
+
+### Cancel booking
+POST {{baseUrl}}/bookings/{{bookingId}}/cancel
+
+###
+# =======================
+# Delete (soft)
+# =======================
+
+DELETE {{baseUrl}}/bookings/{{bookingId}}
