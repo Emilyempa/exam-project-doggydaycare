@@ -18,10 +18,12 @@ export interface UserResponse {
 }
 
 export interface UserCreateRequest {
+  email: string;
+  password: string;
   firstName: string;
   lastName: string;
-  email: string;
   mobileNumber: string;
+  emergencyContact: string;
 }
 
 export interface UserUpdateRequest {

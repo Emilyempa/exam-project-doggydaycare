@@ -36,7 +36,7 @@ public class UserService {
             .lastName(request.lastName())
             .mobileNumber(request.mobileNumber())
             .emergencyContact(request.emergencyContact())
-            .role(request.role())
+            .role(Role.OWNER)
             .enabled(true)
             .deleted(false)
             .build();

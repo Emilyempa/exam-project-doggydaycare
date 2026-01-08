@@ -31,7 +31,5 @@ public record UserCreateRequest(
         regexp = "^(\\+46|0)[1-9]\\d{1,2}-?\\d{3}\\s?\\d{2}\\s?\\d{2}$",
         message = "Invalid Swedish phone number format"
     )
-    String emergencyContact,
-
-    Role role
+    String emergencyContact
 ) {}
