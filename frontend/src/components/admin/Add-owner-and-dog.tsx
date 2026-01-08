@@ -2,19 +2,24 @@
 
 import {Card} from "@/components/card/Card";
 import {UserRoundPlus, Dog} from "lucide-react";
-import { useState} from "react";
+import React, { useState} from "react";
 import { userApi, UserCreateRequest} from "@/lib/endpoints/userapi";
+import { dogApi, DogCreateRequest } from "@/lib/endpoints/dogapi"; // Lägg till import
 
 export default function AddOwnerAndDog() {
 
   const [userId, setUserId] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isSubmittingDog, setIsSubmittingDog] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [dogError, setDogError] = useState<string | null>(null);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
   const handleOwnerSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsSubmitting(true);
     setError(null);
+    setSuccessMessage(null);
 
     const formData = new FormData(e.currentTarget);
 
@@ -30,6 +35,7 @@ export default function AddOwnerAndDog() {
     try {
       const response = await userApi.create(userRequest);
       setUserId(response.id);
+      setSuccessMessage(`Owner ${response.fullName} created successfully! You can now add a dog.`);
       (e.target as HTMLFormElement).reset();
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to create owner');
@@ -38,8 +44,46 @@ export default function AddOwnerAndDog() {
     }
   };
 
+  const handleDogSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setIsSubmittingDog(true);
+    setDogError(null);
+
+    if (!userId) {
+      setDogError('Please create an owner first');
+      setIsSubmittingDog(false);
+      return;
+    }
+
+    const formData = new FormData(e.currentTarget);
+
+    const dogRequest: DogCreateRequest = {
+      name: formData.get('dogName') as string,
+      age: Number.parseInt(formData.get('dogAge') as string),
+      breed: formData.get('breed') as string,
+      dogInfo: formData.get('dogInfo') as string || undefined,
+      userId: userId
+    };
+
+    try {
+      await dogApi.create(dogRequest);
+      setSuccessMessage(`Dog ${dogRequest.name} added successfully!`);
+      (e.target as HTMLFormElement).reset();
+    } catch (err) {
+      setDogError(err instanceof Error ? err.message : 'Failed to create dog');
+    } finally {
+      setIsSubmittingDog(false);
+    }
+  };
+
   return (
     <section className="flex flex-col items-center text-center space-y-8">
+      {successMessage && (
+        <div className="w-full max-w-md bg-green-100 text-green-800 p-4 rounded">
+          {successMessage}
+        </div>
+      )}
+
       {/* Dog Owner Card */}
       <Card
         icon={UserRoundPlus}
@@ -141,11 +185,12 @@ export default function AddOwnerAndDog() {
           </p>
         )}
         <form
-          method="POST"
-          action="/api/v1/admin/users/{userId}/dogs"
+          onSubmit={handleDogSubmit}
           className="space-y-4"
         >
-          <input type="hidden" name="userId" value={userId ?? ""} />
+          {dogError && (
+            <div className="text-red-600 text-sm">{dogError}</div>
+          )}
 
           <div>
             <label htmlFor="dogName">Dog Name</label>
@@ -155,6 +200,7 @@ export default function AddOwnerAndDog() {
               type="text"
               required
               className="input"
+              disabled={isSubmittingDog || !userId}
             />
           </div>
           <div>
@@ -166,19 +212,36 @@ export default function AddOwnerAndDog() {
               min={0}
               required
               className="input"
+              disabled={isSubmittingDog || !userId}
             />
           </div>
           <div>
-            <label htmlFor="breed">Breed</label>
+            <label htmlFor="breed">Breed (Optional)</label>
             <input
               id="breed"
               name="breed"
               type="text"
-              required
               className="input"
+              disabled={isSubmittingDog || !userId}
             />
           </div>
-          <button type="submit" className="btn-primary w-full mt-8">Add Dog</button>
+          <div>
+            <label htmlFor="dogInfo">Dog Info (Optional)</label>
+            <textarea
+              id="dogInfo"
+              name="dogInfo"
+              className="input"
+              rows={3}
+              disabled={isSubmittingDog || !userId}
+            />
+          </div>
+          <button
+            type="submit"
+            className="btn-primary w-full mt-8"
+            disabled={isSubmittingDog || !userId}
+          >
+            {isSubmittingDog ? 'Adding...' : 'Add Dog'}
+          </button>
         </form>
       </Card>
     </section>

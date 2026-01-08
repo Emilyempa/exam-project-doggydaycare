@@ -3,20 +3,25 @@ import { api } from '../api';
 export interface DogResponse {
   id: string; // UUID
   name: string;
+  age: number;
   breed?: string;
-  ownerId: string;
+  dogInfo?: string;
+  userId: string;
 }
 
 export interface DogCreateRequest {
   name: string;
+  age: number;
   breed?: string;
-  ownerId: string;
+  dogInfo?: string;
+  userId: string;
 }
 
 export interface DogUpdateRequest {
   name?: string;
+  age?: number;
   breed?: string;
-  ownerId?: string;
+  dogInfo?: string;
 }
 
 export const dogApi = {
