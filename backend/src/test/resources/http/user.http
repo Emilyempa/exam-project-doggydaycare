@@ -1,32 +1,41 @@
 @baseUrl = http://localhost:8080/api/v1
 @userId = e9a25cd1-c9d8-49fe-a442-0b714eee66dc
 
+###
+# =======================
+# Create user
+# =======================
+
 POST {{baseUrl}}/users
 Content-Type: application/json
 
 {
-  "email": "testuser@doggydaycare.com",
+  "email": "testinguser@doggydaycare.com",
   "password": "test123",
-  "firstName": "Test",
+  "firstName": "Testing",
   "lastName": "User",
-  "mobileNumber": "+46700000000",
-  "emergencyContact": "+46700000001",
-  "role": "OWNER"
+  "mobileNumber": "+46700000002",
+  "emergencyContact": "+46700000007"
 }
 
 ###
+# =======================
+# Read user
+# =======================
 
+### Get all users
 GET {{baseUrl}}/users
 
-###
-
+### Get user by id
 GET {{baseUrl}}/users/{{userId}}
 
-###
-
+### Get all dogs for a user
 GET {{baseUrl}}/users/{{userId}}/dogs
 
 ###
+# =======================
+# Update user
+# =======================
 
 PUT {{baseUrl}}/users/{{userId}}
 Content-Type: application/json
@@ -37,6 +46,8 @@ Content-Type: application/json
 }
 
 ###
+# =======================
+# Delete user (soft)
+# =======================
+
 DELETE {{baseUrl}}/users/{{userId}}
-
-

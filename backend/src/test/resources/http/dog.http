@@ -2,6 +2,11 @@
 @userId = 8bb888fc-525f-4a50-a0bd-f20177a9b6c2
 @dogId = 06806859-33e1-44fc-8f3c-a9172046f72f
 
+###
+# =======================
+# Create dog
+# =======================
+
 POST {{baseUrl}}/dogs
 Content-Type: application/json
 
@@ -11,14 +16,23 @@ Content-Type: application/json
   "breed": "Golden retriever",
   "dogInfo": "Loves long walks",
   "userId": "{{userId}}"
-
 }
 
 ###
+# =======================
+# Read dog
+# =======================
 
+### Get dog by id
 GET {{baseUrl}}/dogs/{{dogId}}
 
+### Get all dogs
+GET {{baseUrl}}/dogs
+
 ###
+# =======================
+# Update dog
+# =======================
 
 PUT {{baseUrl}}/dogs/{{dogId}}
 Content-Type: application/json
@@ -29,4 +43,8 @@ Content-Type: application/json
 }
 
 ###
+# =======================
+# Delete dog (soft)
+# =======================
+
 DELETE {{baseUrl}}/dogs/{{dogId}}
