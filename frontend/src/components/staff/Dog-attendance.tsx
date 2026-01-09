@@ -252,8 +252,14 @@ export default function DogAttendance() {
             ) : (
               <div className="space-y-4">
                 {dogsForToday.map(dog => {
-                  const isCheckedIn = dog.booking.status === 'CHECKED_IN' || dog.booking.status === 'CHECKED_OUT';
+                  const status = dog.booking.status;
                   const isOpen = openInfoDogId === dog.id;
+
+                  const getStatusClasses = () => {
+                    if (status === 'CHECKED_IN') return "btn-primary";
+                    if (status === 'CHECKED_OUT') return "bg-brand-secondary text-secondary opacity-60 cursor-not-allowed";
+                    return "bg-secondary text-brand-secondary";
+                  };
 
                   return (
                     <article
@@ -308,14 +314,16 @@ export default function DogAttendance() {
                       </p>
 
                       <button
-                        className={`w-full mt-4 ${
-                          isCheckedIn
-                            ? "btn-primary"
-                            : "bg-secondary text-brand-secondary"
-                        }`}
-                        onClick={() => toggleCheckIn(dog.id, dog.name)}
+                        disabled={status === 'CHECKED_OUT'}
+                        className={`w-full mt-4 ${getStatusClasses()}`}
+                        onClick={() => {
+                          if (status === 'CONFIRMED') toggleCheckIn(dog.id, dog.name);
+                          if (status === 'CHECKED_IN') toggleCheckIn(dog.id, dog.name);
+                        }}
                       >
-                        {isCheckedIn ? "Check out" : "Check in"}
+                        {status === 'CONFIRMED' && "Check in"}
+                        {status === 'CHECKED_IN' && "Check out"}
+                        {status === 'CHECKED_OUT' && "Gone home"}
                       </button>
                     </article>
                   );
