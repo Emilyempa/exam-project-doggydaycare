@@ -40,7 +40,7 @@ export const Header: React.FC<HeaderProps> = ({ title }) => {
       {/* Right top: Logout */}
       <nav className="absolute top-6 right-6 z-20" aria-label="User navigation">
           <Link
-            href="/logout"
+            href="/home"
             className="
           rounded-md
           inline-block
