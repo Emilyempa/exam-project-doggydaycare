@@ -45,7 +45,6 @@ export const Header: React.FC<HeaderProps> = ({ title }) => {
           rounded-md
           inline-block
           border-2
-          border border-transparent
           bg-feature-primary
           px-4 py-2
           text-xl
