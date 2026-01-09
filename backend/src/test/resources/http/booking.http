@@ -1,7 +1,7 @@
 @baseUrl = http://localhost:8080/api/v1
 @bookingId = e2542527-dee1-42d8-a04c-352012d3b666
-@userId = eaa78da7-5461-417d-a9d8-d0ec1a4dea68
-@dogId = d50daa29-64c7-4744-a0e1-64a5e7e55683
+@userId = 8bb888fc-525f-4a50-a0bd-f20177a9b6c2
+@dogId = 59907958-43ed-4308-855e-e1374d37596b
 
 ###
 # =======================
@@ -14,10 +14,10 @@ Content-Type: application/json
 {
   "dogId": "{{dogId}}",
   "bookedById": "{{userId}}",
-  "date": "2026-01-10",
-  "expectedCheckInTime": "08:30",
+  "date": "2026-01-26",
+  "expectedCheckInTime": "07:30",
   "expectedCheckOutTime": "16:30",
-  "notes": "First daycare visit"
+  "notes": "granny picking up today"
 }
 
 ###
