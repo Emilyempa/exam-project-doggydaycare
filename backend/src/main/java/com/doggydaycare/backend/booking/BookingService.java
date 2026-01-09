@@ -27,8 +27,6 @@ public class BookingService {
     private final DogRepository dogRepository;
     private final UserRepository userRepository;
 
-    private final BookingService self;
-
 
     /* =======================
        Create
@@ -197,34 +195,7 @@ public class BookingService {
         return toResponse(booking);
     }
 
-    /**
-     * Automatically marks past bookings as NO_SHOW if they were
-     * never checked on the actual date the day.
-     */
-    @Scheduled(cron = "0 0 0 * * *") // every night kl 00:00
-    @Transactional
-    public void nightlyMarkNoShow() {
-        self.markPastBookingsAsNoShowIfNotCheckedIn();
-    }
 
-    @Transactional
-    public void markPastBookingsAsNoShowIfNotCheckedIn() {
-        LocalDate today = LocalDate.now();
-
-        // Find all bookings that are CONFIRMED, before today, and NOT checked in
-        List<BookingEntity> pastUnattendedBookings = bookingRepository
-            .findByStatusAndDeletedFalse(BookingStatus.CONFIRMED).stream()
-            .filter(b -> b.getDate().isBefore(today))
-            .filter(b -> b.getActualCheckInTime() == null) // Only those not checked in
-            .toList();
-
-        // Mark them as NO_SHOW
-        pastUnattendedBookings.forEach(b -> b.setStatus(BookingStatus.NO_SHOW));
-
-        if (!pastUnattendedBookings.isEmpty()) {
-            bookingRepository.saveAll(pastUnattendedBookings);
-        }
-    }
 
 
     /* =======================

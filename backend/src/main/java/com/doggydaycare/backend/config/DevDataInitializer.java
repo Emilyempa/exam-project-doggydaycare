@@ -142,7 +142,7 @@ public class DevDataInitializer implements ApplicationRunner {
                 .date(LocalDate.now())
                 .expectedCheckInTime(LocalTime.of(8, 0))
                 .expectedCheckOutTime(LocalTime.of(16, 0))
-                .status(BookingStatus.PENDING)
+                .status(BookingStatus.CONFIRMED)
                 .dog(bonnie)
                 .bookedBy(ownerOne)
                 .notes("First daycare visit for Bonnie")
