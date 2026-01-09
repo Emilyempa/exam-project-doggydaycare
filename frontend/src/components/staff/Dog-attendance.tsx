@@ -147,7 +147,7 @@ export default function DogAttendance() {
     setOpenInfoDogId(prev => (prev === bookingId ? null : bookingId));
   };
 
-  const toggleCheckIn = async (bookingId: string, dogName: string) => {
+  const toggleCheckIn = async (bookingId: string) => {
     const isCheckedIn = checkedIn.includes(bookingId);
 
     try {
@@ -317,8 +317,8 @@ export default function DogAttendance() {
                         disabled={status === 'CHECKED_OUT'}
                         className={`w-full mt-4 ${getStatusClasses()}`}
                         onClick={() => {
-                          if (status === 'CONFIRMED') toggleCheckIn(dog.id, dog.name);
-                          if (status === 'CHECKED_IN') toggleCheckIn(dog.id, dog.name);
+                          if (status === 'CONFIRMED') toggleCheckIn(dog.id);
+                          if (status === 'CHECKED_IN') toggleCheckIn(dog.id);
                         }}
                       >
                         {status === 'CONFIRMED' && "Check in"}
