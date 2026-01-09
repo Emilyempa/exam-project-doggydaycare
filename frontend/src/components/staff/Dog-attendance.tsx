@@ -1,10 +1,13 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card } from "@/components/card/Card";
 import { CalendarCheck2, Info, X } from "lucide-react";
 import NextAndPrevious from "@/components/buttons/Next-and-previous";
 import { format, startOfWeek, addDays, addWeeks } from 'date-fns';
+import { bookingApi, BookingResponse } from "@/lib/endpoints/bookingapi";
+import { userApi, UserResponse } from "@/lib/endpoints/userapi";
+import { dogApi, DogResponse } from "@/lib/endpoints/dogapi";
 
 // =========================
 // Component: DogAttendance
@@ -14,55 +17,45 @@ import { format, startOfWeek, addDays, addWeeks } from 'date-fns';
 export default function DogAttendance() {
   // ---------- UI state ----------
   const [view, setView] = useState<"day" | "week">("day");
-  const [openInfoDogId, setOpenInfoDogId] = useState<number | null>(null);
+  const [openInfoDogId, setOpenInfoDogId] = useState<string | null>(null);
   const [checkedIn, setCheckedIn] = useState<string[]>([]);
   const [currentDate, setCurrentDate] = useState(new Date());
 
-  // Mock data (replace with backend data later)
-  const dogs = [
-    {
-      id: 1,
-      name: "Peggy",
-      breed: "Border Collie",
-      startTime: "8:00",
-      endTime: "16:00",
-      schedule: ["Monday", "Wednesday", "Friday"],
-      owner: {
-        name: "Emily Pettersson",
-        phone: "070-123 45 67",
-        emergencyContact: "Jonas Pettersson – 070-987 65 43",
-        notes: "Är på diet"
+  // ---------- Data state ----------
+  const [bookings, setBookings] = useState<BookingResponse[]>([]);
+  const [users, setUsers] = useState<Map<string, UserResponse>>(new Map());
+  const [dogs, setDogs] = useState<Map<string, DogResponse>>(new Map());
+  const [loading, setLoading] = useState(true);
+
+  // ---------- Fetch data ----------
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setLoading(true);
+
+        // Fetch all bookings, users, and dogs in parallel
+        const [bookingsRes, usersRes, dogsRes] = await Promise.all([
+          bookingApi.getAll(),
+          userApi.getAll(),
+          dogApi.getAll()
+        ]);
+
+        // Create maps for quick lookups
+        const usersMap = new Map(usersRes.map(u => [u.id, u]));
+        const dogsMap = new Map(dogsRes.map(d => [d.id, d]));
+
+        setBookings(bookingsRes);
+        setUsers(usersMap);
+        setDogs(dogsMap);
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      } finally {
+        setLoading(false);
       }
-    },
-    {
-      id: 2,
-      name: "Bella",
-      breed: "Golden Retriever",
-      startTime: "9:00",
-      endTime: "15:00",
-      schedule: ["Tuesday", "Thursday"],
-      owner: {
-        name: "Anna Jansson",
-        phone: "070-123 45 67",
-        emergencyContact: "Jonas Jansson – 070-987 67 45",
-        notes: "Rädd för höga ljud"
-      }
-    },
-    {
-      id: 3,
-      name: "Max",
-      breed: "Labrador",
-      startTime: "7:30",
-      endTime: "17:00",
-      schedule: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
-      owner: {
-        name: "Hans Persson",
-        phone: "070-123 45 67",
-        emergencyContact: "Joline Jussi – 070-987 65 43",
-        notes: "Nyopererad och ska ta lugna promenader"
-      }
-    }
-  ];
+    };
+
+    fetchData();
+  }, []);
 
   // Get current week days
   const getWeekDays = () => {
@@ -84,22 +77,96 @@ export default function DogAttendance() {
   const currentDayName = format(currentDate, 'EEEE');
   const currentDayFormatted = format(currentDate, 'EEEE, MMM d');
   const currentDayIndex = currentDate.getTime();
+  const currentDateStr = format(currentDate, 'yyyy-MM-dd');
 
+  // Filter bookings for the current day
+  const bookingsForToday = bookings.filter(booking =>
+    booking.date === currentDateStr &&
+    booking.status !== 'CANCELLED'
+  );
 
-  // Filter dogs for current day
-  const dogsForToday = dogs.filter(dog => dog.schedule.includes(currentDayName));
+  // Transform bookings into dog data format for display
+  const dogsForToday = bookingsForToday.map(booking => {
+    const dog = dogs.get(booking.dogId);
+    const owner = users.get(booking.bookedById);
 
-  // ---------- Handlers ----------
-  const toggleInfo = (dogId: number) => {
-    setOpenInfoDogId(prev => (prev === dogId ? null : dogId));
+    return {
+      id: booking.id,
+      dogId: booking.dogId,
+      name: booking.dogName,
+      breed: dog?.breed || 'Unknown',
+      startTime: booking.expectedCheckInTime.slice(0, 5), // HH:mm from HH:mm:ss
+      endTime: booking.expectedCheckOutTime.slice(0, 5),
+      schedule: [currentDayName], // Not used in day view
+      booking: booking,
+      owner: {
+        name: owner?.fullName || 'Unknown',
+        phone: owner?.mobileNumber || 'N/A',
+        email: owner?.email || 'N/A',
+        emergencyContact: owner?.emergencyContact || 'N/A',
+        notes: booking.notes || 'No notes'
+      }
+    };
+  });
+
+  // Get all unique dogs with their bookings for the week view
+  const getDogsForWeek = () => {
+    const dogMap = new Map<string, {
+      id: string;
+      name: string;
+      breed: string;
+      bookings: Map<string, BookingResponse>;
+    }>();
+
+    // Get bookings for the current week
+    const weekStart = weekDays.at(0)!.dateStr;
+    const weekEnd = weekDays.at(-1)!.dateStr;
+
+    bookings
+      .filter(b => b.date >= weekStart && b.date <= weekEnd && b.status !== 'CANCELLED')
+      .forEach(booking => {
+        if (!dogMap.has(booking.dogId)) {
+          const dog = dogs.get(booking.dogId);
+          dogMap.set(booking.dogId, {
+            id: booking.dogId,
+            name: booking.dogName,
+            breed: dog?.breed || 'Unknown',
+            bookings: new Map()
+          });
+        }
+        dogMap.get(booking.dogId)!.bookings.set(booking.date, booking);
+      });
+
+    return Array.from(dogMap.values());
   };
 
-  const toggleCheckIn = (dogName: string) => {
-    setCheckedIn(prev =>
-      prev.includes(dogName)
-        ? prev.filter(name => name !== dogName)
-        : [...prev, dogName]
-    );
+  const dogsForWeek = getDogsForWeek();
+
+  // ---------- Handlers ----------
+  const toggleInfo = (bookingId: string) => {
+    setOpenInfoDogId(prev => (prev === bookingId ? null : bookingId));
+  };
+
+  const toggleCheckIn = async (bookingId: string, dogName: string) => {
+    const isCheckedIn = checkedIn.includes(bookingId);
+
+    try {
+      if (isCheckedIn) {
+        // Check out
+        await bookingApi.checkOut(bookingId);
+        setCheckedIn(prev => prev.filter(id => id !== bookingId));
+      } else {
+        // Check in
+        await bookingApi.checkIn(bookingId);
+        setCheckedIn(prev => [...prev, bookingId]);
+      }
+
+      // Refresh bookings
+      const bookingsRes = await bookingApi.getAll();
+      setBookings(bookingsRes);
+    } catch (error) {
+      console.error('Error toggling check-in:', error);
+    }
   };
 
   const goToNextDay = () => {
@@ -117,6 +184,16 @@ export default function DogAttendance() {
   const goToPreviousWeek = () => {
     setCurrentDate(prev => addWeeks(prev, -1));
   };
+
+  if (loading) {
+    return (
+      <section className="flex flex-col items-center text-center">
+        <Card title="Dog Schedule" icon={CalendarCheck2} className="card-lg">
+          <div className="p-8">Loading...</div>
+        </Card>
+      </section>
+    );
+  }
 
   return (
     <section className="flex flex-col items-center text-center">
@@ -169,13 +246,13 @@ export default function DogAttendance() {
 
             {/* Dog cards */}
             {dogsForToday.length === 0 ? (
-              <div className="p-8 text-gray-500">
+              <div className="p-8 text-brand-secondary">
                 <p>No dogs scheduled for {currentDayName}</p>
               </div>
             ) : (
               <div className="space-y-4">
                 {dogsForToday.map(dog => {
-                  const isCheckedIn = checkedIn.includes(dog.name);
+                  const isCheckedIn = dog.booking.status === 'CHECKED_IN' || dog.booking.status === 'CHECKED_OUT';
                   const isOpen = openInfoDogId === dog.id;
 
                   return (
@@ -211,10 +288,13 @@ export default function DogAttendance() {
                               <strong>Phone:</strong> {dog.owner.phone}
                             </li>
                             <li>
+                              <strong>Email:</strong> {dog.owner.email}
+                            </li>
+                            <li>
                               <strong>Emergency:</strong> {dog.owner.emergencyContact}
                             </li>
                             <li>
-                              <strong>Extra info:</strong> {dog.owner.notes}
+                              <strong>Dog info:</strong> {dog.owner.notes}
                             </li>
                           </ul>
                         </div>
@@ -233,7 +313,7 @@ export default function DogAttendance() {
                             ? "btn-primary"
                             : "bg-secondary text-brand-secondary"
                         }`}
-                        onClick={() => toggleCheckIn(dog.name)}
+                        onClick={() => toggleCheckIn(dog.id, dog.name)}
                       >
                         {isCheckedIn ? "Check out" : "Check in"}
                       </button>
@@ -268,7 +348,7 @@ export default function DogAttendance() {
                 </tr>
                 </thead>
                 <tbody>
-                {dogs.map(dog => (
+                {dogsForWeek.map(dog => (
                   <tr key={dog.id} className="hover:bg-feature-secondary transition-colors">
                     <td className="border border-secondary p-3 font-semibold text-left">
                       <div>{dog.name}</div>
@@ -276,7 +356,8 @@ export default function DogAttendance() {
                     </td>
 
                     {weekDays.map(day => {
-                      const isScheduled = dog.schedule.includes(day.dayName);
+                      const booking = dog.bookings.get(day.dateStr);
+                      const isScheduled = !!booking;
                       return (
                         <td
                           key={day.dateStr}
@@ -286,7 +367,9 @@ export default function DogAttendance() {
                               : "text-gray-400"
                           }`}
                         >
-                          {isScheduled ? `${dog.startTime} – ${dog.endTime}` : "—"}
+                          {isScheduled
+                            ? `${booking.expectedCheckInTime.slice(0, 5)} – ${booking.expectedCheckOutTime.slice(0, 5)}`
+                            : "—"}
                         </td>
                       );
                     })}
@@ -298,7 +381,7 @@ export default function DogAttendance() {
 
             {/* Mobile Week Cards */}
             <div className="md:hidden space-y-4">
-              {dogs.map(dog => (
+              {dogsForWeek.map(dog => (
                 <div
                   key={dog.id}
                   className="bg-feature-primary rounded-lg shadow p-4 text-left"
@@ -307,24 +390,27 @@ export default function DogAttendance() {
                   <p className="text-sm text-gray-600 mb-2">{dog.breed}</p>
 
                   <ul className="space-y-1 text-sm">
-                    {weekDays.map(day => (
-                      <li
-                        key={day.dateStr}
-                        className="flex justify-between border-b py-1"
-                      >
-                        <div>
-                          <span className="font-medium">{day.dayName}</span>
-                          <span className="text-xs text-gray-500 ml-2">{day.shortDate}</span>
-                        </div>
-                        {dog.schedule.includes(day.dayName) ? (
-                          <span className="bg-brand-primary text-beige-light px-2 py-0.5 rounded text-xs">
-                            {dog.startTime} – {dog.endTime}
-                          </span>
-                        ) : (
-                          <span className="text-gray-400">—</span>
-                        )}
-                      </li>
-                    ))}
+                    {weekDays.map(day => {
+                      const booking = dog.bookings.get(day.dateStr);
+                      return (
+                        <li
+                          key={day.dateStr}
+                          className="flex justify-between border-b py-1"
+                        >
+                          <div>
+                            <span className="font-medium">{day.dayName}</span>
+                            <span className="text-xs text-gray-500 ml-2">{day.shortDate}</span>
+                          </div>
+                          {booking ? (
+                            <span className="bg-brand-primary text-beige-light px-2 py-0.5 rounded text-xs">
+                              {booking.expectedCheckInTime.slice(0, 5)} – {booking.expectedCheckOutTime.slice(0, 5)}
+                            </span>
+                          ) : (
+                            <span className="text-gray-400">—</span>
+                          )}
+                        </li>
+                      );
+                    })}
                   </ul>
                 </div>
               ))}

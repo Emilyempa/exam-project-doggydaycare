@@ -4,7 +4,7 @@ import {Card} from "@/components/card/Card";
 import {UserRoundPlus, Dog} from "lucide-react";
 import React, { useState} from "react";
 import { userApi, UserCreateRequest} from "@/lib/endpoints/userapi";
-import { dogApi, DogCreateRequest } from "@/lib/endpoints/dogapi"; // Lägg till import
+import { dogApi, DogCreateRequest } from "@/lib/endpoints/dogapi";
 
 export default function AddOwnerAndDog() {
 
