@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { Card } from "@/components/card/Card";
 import { CalendarCheck2, Info, X } from "lucide-react";
 import NextAndPrevious from "@/components/buttons/Next-and-previous";
-import { format, startOfWeek, addDays, addWeeks } from 'date-fns';
+import { format, startOfWeek, addDays, addWeeks, isSameDay } from 'date-fns';
 import { bookingApi, BookingResponse } from "@/lib/endpoints/bookingapi";
 import { userApi, UserResponse } from "@/lib/endpoints/userapi";
 import { dogApi, DogResponse } from "@/lib/endpoints/dogapi";
@@ -54,7 +54,7 @@ export default function DogAttendance() {
       }
     };
 
-    fetchData();
+    void fetchData();
   }, []);
 
   // Get current week days
@@ -78,6 +78,9 @@ export default function DogAttendance() {
   const currentDayFormatted = format(currentDate, 'EEEE, MMM d');
   const currentDayIndex = currentDate.getTime();
   const currentDateStr = format(currentDate, 'yyyy-MM-dd');
+
+  const today = new Date();
+  const isToday = isSameDay(currentDate, today);
 
   // Filter bookings for the current day
   const bookingsForToday = bookings.filter(booking =>
@@ -148,6 +151,8 @@ export default function DogAttendance() {
   };
 
   const toggleCheckIn = async (bookingId: string) => {
+    if (!isToday) return;
+
     const isCheckedIn = checkedIn.includes(bookingId);
 
     try {
@@ -315,10 +320,14 @@ export default function DogAttendance() {
 
                       <button
                         disabled={status === 'CHECKED_OUT'}
-                        className={`w-full mt-4 ${getStatusClasses()}`}
+                        className={`w-full mt-4 ${
+                          !isToday
+                            ? "bg-secondary text-brand-secondary cursor-not-allowed"
+                            : getStatusClasses()
+                        }`}
                         onClick={() => {
-                          if (status === 'CONFIRMED') toggleCheckIn(dog.id);
-                          if (status === 'CHECKED_IN') toggleCheckIn(dog.id);
+                          if (status === 'CONFIRMED') void toggleCheckIn(dog.id);
+                          if (status === 'CHECKED_IN') void toggleCheckIn(dog.id);
                         }}
                       >
                         {status === 'CONFIRMED' && "Check in"}
