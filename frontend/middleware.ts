@@ -14,12 +14,12 @@ export function middleware(request: NextRequest) {
     return NextResponse.redirect(new URL('/login', request.url));
   }
 
-  // If user is logged in and tries to access login page
+  // If the user is logged in and tries to access login page
   if (isPublicPath && token && path === '/login') {
     return NextResponse.redirect(new URL('/dashboard', request.url));
   }
 
-  // Validate token and check role DO I WANT THIS?
+  // Validate token and check role
   if (token) {
     try {
       // Decode JWT and check the role

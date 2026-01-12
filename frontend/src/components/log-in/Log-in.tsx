@@ -42,8 +42,6 @@ export const LoginForm = () => {
         role: data.role
       }));
 
-      // Alternative: Save in cookie
-      // document.cookie = `token=${data.token}; path=/; max-age=86400; SameSite=Strict`;
       // Redirect based on the role
       switch (data.role) {
         case "ADMIN":
