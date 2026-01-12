@@ -101,7 +101,7 @@ public class UserEntity implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        // Spring Security kräver "ROLE_" prefix
+        // Spring Security demands a "ROLE_" prefix
         return List.of(new SimpleGrantedAuthority("ROLE_" + role.name()));
     }
 

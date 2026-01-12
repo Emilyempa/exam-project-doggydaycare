@@ -4,7 +4,6 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
@@ -27,11 +26,11 @@ public class BookingController {
      * The booking is automatically confirmed if no conflict exists.
      */
     @PostMapping
-    public ResponseEntity<BookingResponse> createBooking(
+    @ResponseStatus(HttpStatus.CREATED)
+    public BookingResponse createBooking(
         @Valid @RequestBody BookingCreateRequest request
     ) {
-        BookingResponse created = bookingService.createBooking(request);
-        return ResponseEntity.status(HttpStatus.CREATED).body(created);
+        return bookingService.createBooking(request);
     }
 
     /* =======================
@@ -42,54 +41,54 @@ public class BookingController {
      * Returns all non-deleted bookings.
      */
     @GetMapping
-    public ResponseEntity<List<BookingResponse>> getAllBookings() {
-        return ResponseEntity.ok(bookingService.getAllBookings());
+    public List<BookingResponse> getAllBookings() {
+        return bookingService.getAllBookings();
     }
 
     /**
      * Returns a single booking by id.
      */
     @GetMapping("/{id}")
-    public ResponseEntity<BookingResponse> getBookingById(@PathVariable UUID id) {
-        return ResponseEntity.ok(bookingService.getBookingById(id));
+    public BookingResponse getBookingById(@PathVariable UUID id) {
+        return bookingService.getBookingById(id);
     }
 
     /**
      * Returns all bookings for a specific date.
      */
     @GetMapping("/date/{date}")
-    public ResponseEntity<List<BookingResponse>> getBookingsByDate(
+    public List<BookingResponse> getBookingsByDate(
         @PathVariable
         @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
         LocalDate date
     ) {
-        return ResponseEntity.ok(bookingService.getBookingsByDate(date));
+        return bookingService.getBookingsByDate(date);
     }
 
     /**
      * Returns all bookings for a specific dog.
      */
     @GetMapping("/dog/{dogId}")
-    public ResponseEntity<List<BookingResponse>> getBookingsByDogId(@PathVariable UUID dogId) {
-        return ResponseEntity.ok(bookingService.getBookingsByDogId(dogId));
+    public List<BookingResponse> getBookingsByDogId(@PathVariable UUID dogId) {
+        return bookingService.getBookingsByDogId(dogId);
     }
 
     /**
      * Returns all bookings created by a specific user.
      */
     @GetMapping("/user/{userId}")
-    public ResponseEntity<List<BookingResponse>> getBookingsByUserId(@PathVariable UUID userId) {
-        return ResponseEntity.ok(bookingService.getBookingsByUserId(userId));
+    public List<BookingResponse> getBookingsByUserId(@PathVariable UUID userId) {
+        return bookingService.getBookingsByUserId(userId);
     }
 
     /**
      * Returns all bookings with a specific status.
      */
     @GetMapping("/status/{status}")
-    public ResponseEntity<List<BookingResponse>> getBookingsByStatus(
+    public List<BookingResponse> getBookingsByStatus(
         @PathVariable BookingStatus status
     ) {
-        return ResponseEntity.ok(bookingService.getBookingsByStatus(status));
+        return bookingService.getBookingsByStatus(status);
     }
 
     /* =======================
@@ -101,11 +100,11 @@ public class BookingController {
      * Only non-null fields are applied.
      */
     @PutMapping("/{id}")
-    public ResponseEntity<BookingResponse> updateBooking(
+    public BookingResponse updateBooking(
         @PathVariable UUID id,
         @Valid @RequestBody BookingUpdateRequest request
     ) {
-        return ResponseEntity.ok(bookingService.updateBooking(id, request));
+        return bookingService.updateBooking(id, request);
     }
 
     /* =======================
@@ -116,24 +115,24 @@ public class BookingController {
      * Marks a booking as checked in.
      */
     @PostMapping("/{id}/check-in")
-    public ResponseEntity<BookingResponse> checkIn(@PathVariable UUID id) {
-        return ResponseEntity.ok(bookingService.checkIn(id));
+    public BookingResponse checkIn(@PathVariable UUID id) {
+        return bookingService.checkIn(id);
     }
 
     /**
      * Marks a booking as checked out.
      */
     @PostMapping("/{id}/check-out")
-    public ResponseEntity<BookingResponse> checkOut(@PathVariable UUID id) {
-        return ResponseEntity.ok(bookingService.checkOut(id));
+    public BookingResponse checkOut(@PathVariable UUID id) {
+        return bookingService.checkOut(id);
     }
 
     /**
      * Cancels a booking.
      */
     @PostMapping("/{id}/cancel")
-    public ResponseEntity<BookingResponse> cancelBooking(@PathVariable UUID id) {
-        return ResponseEntity.ok(bookingService.cancelBooking(id));
+    public BookingResponse cancelBooking(@PathVariable UUID id) {
+        return bookingService.cancelBooking(id);
     }
 
     /* =======================
@@ -144,8 +143,8 @@ public class BookingController {
      * Soft deletes a booking.
      */
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteBooking(@PathVariable UUID id) {
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteBooking(@PathVariable UUID id) {
         bookingService.deleteBooking(id);
-        return ResponseEntity.noContent().build();
     }
 }
