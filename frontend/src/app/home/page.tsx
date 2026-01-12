@@ -1,8 +1,8 @@
 'use client';
 
-import Hero from "@/components/hero/Hero";
-import GetInTouch from "@/components/get-in-touch/Get-in-touch";
-import About from "@/components/info-home/About";
+import Hero from "@/components/home-page/Hero";
+import GetInTouch from "@/components/home-page/Get-in-touch";
+import About from "@/components/home-page/About";
 
 
 export default function Page() {
