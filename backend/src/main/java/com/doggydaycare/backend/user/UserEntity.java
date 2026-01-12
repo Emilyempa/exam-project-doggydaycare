@@ -3,6 +3,7 @@ package com.doggydaycare.backend.user;
 import com.doggydaycare.backend.dog.DogEntity;
 import jakarta.persistence.*;
 import lombok.*;
+import org.jspecify.annotations.NonNull;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedBy;
@@ -100,12 +101,14 @@ public class UserEntity implements UserDetails {
        ======================= */
 
     @Override
+    @NonNull
     public Collection<? extends GrantedAuthority> getAuthorities() {
         // Spring Security demands a "ROLE_" prefix
         return List.of(new SimpleGrantedAuthority("ROLE_" + role.name()));
     }
 
     @Override
+    @NonNull
     public String getUsername() {
         // use email as a username for login
         return email;
@@ -116,9 +119,10 @@ public class UserEntity implements UserDetails {
         return true;
     }
 
+    // Locked if deleted is true
     @Override
     public boolean isAccountNonLocked() {
-        return !deleted; // Låst om deleted är true
+        return !deleted;
     }
 
     @Override
