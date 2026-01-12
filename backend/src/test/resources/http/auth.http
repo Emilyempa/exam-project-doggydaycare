@@ -1,0 +1,25 @@
+@baseUrl = http://localhost:8080/api/v1
+@email = admin@doggydaycare.com
+@password = admin123
+
+###
+# =======================
+# Login
+# =======================
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "{{email}}",
+  "password": "{{password}}"
+}
+
+###
+# =======================
+# Example: Use token to access protected endpoint
+# =======================
+# Copy JWT from login-response "token"-field and put here:
+@jwt = <PUT_YOUR_JWT_HERE>
+
+GET {{baseUrl}}/users
+Authorization: Bearer {{jwt}}
