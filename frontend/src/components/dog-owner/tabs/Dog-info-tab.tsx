@@ -111,8 +111,9 @@ export default function DogInfoTab() {
             {editingDogId === dog.id && (
               <div className="space-y-4">
                 <div>
-                  <label>Name</label>
+                  <label htmlFor="name">Name</label>
                   <input
+                    id="name"
                     className="input"
                     value={form.name}
                     onChange={(e) =>
@@ -122,8 +123,9 @@ export default function DogInfoTab() {
                 </div>
 
                 <div>
-                  <label>Breed</label>
+                  <label htmlFor="breed">Breed</label>
                   <input
+                    id="breed"
                     className="input"
                     value={form.breed}
                     onChange={(e) =>
@@ -133,8 +135,9 @@ export default function DogInfoTab() {
                 </div>
 
                 <div>
-                  <label>Age</label>
+                  <label htmlFor="age">Age</label>
                   <input
+                    id="age"
                     type="number"
                     className="input"
                     value={form.age}
@@ -145,8 +148,9 @@ export default function DogInfoTab() {
                 </div>
 
                 <div>
-                  <label>Info</label>
+                  <label htmlFor="doginfo">Info</label>
                   <textarea
+                    id="doginfo"
                     className="input"
                     value={form.dogInfo}
                     onChange={(e) =>

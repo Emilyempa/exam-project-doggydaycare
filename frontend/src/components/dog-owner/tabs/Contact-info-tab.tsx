@@ -96,45 +96,55 @@ export default function ContactInfoTab() {
       {editing && (
         <div className="space-y-4">
           <div>
-            <label>First Name</label>
+            <label htmlFor="firstName">First Name</label>
             <input
+              id="firstName"
               className="input"
+              type="text"
               value={form.firstName}
               onChange={(e) => setForm({ ...form, firstName: e.target.value })}
             />
           </div>
 
           <div>
-            <label>Last Name</label>
+            <label htmlFor="lastName">Last Name</label>
             <input
+              id="lastName"
               className="input"
+              type="text"
               value={form.lastName}
               onChange={(e) => setForm({ ...form, lastName: e.target.value })}
             />
           </div>
 
           <div>
-            <label>Email</label>
+            <label htmlFor="email">Email</label>
             <input
+              id="email"
               className="input"
+              type="text"
               value={form.email}
               onChange={(e) => setForm({ ...form, email: e.target.value })}
             />
           </div>
 
           <div>
-            <label>Mobile Number</label>
+            <label htmlFor="mobileNumber">Mobile Number</label>
             <input
+              id="mobileNumber"
               className="input"
+              type="text"
               value={form.mobileNumber}
               onChange={(e) => setForm({ ...form, mobileNumber: e.target.value })}
             />
           </div>
 
           <div>
-            <label>Emergency Contact</label>
+            <label htmlFor="emergencyContact">Emergency Contact</label>
             <input
+              id="emergencyContact"
               className="input"
+              type="text"
               value={form.emergencyContact}
               onChange={(e) =>
                 setForm({ ...form, emergencyContact: e.target.value })
