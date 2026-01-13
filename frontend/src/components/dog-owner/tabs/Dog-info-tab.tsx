@@ -2,17 +2,27 @@
 
 import { useEffect, useState } from "react";
 import { getUser } from "@/lib/auth-utils";
-import { userApi, Dog } from "@/lib/endpoints/userapi";
+import { dogApi, DogResponse, DogUpdateRequest } from "@/lib/endpoints/dogapi";
 
 export default function DogInfoTab() {
-  const [dogs, setDogs] = useState<Dog[]>([]);
+  const [dogs, setDogs] = useState<DogResponse[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // Get logged-in user
+  const [editingDogId, setEditingDogId] = useState<string | null>(null);
+  const [saving, setSaving] = useState(false);
+
+  const [form, setForm] = useState<DogUpdateRequest>({
+    name: "",
+    breed: "",
+    age: 0,
+    dogInfo: "",
+  });
+
   const user = getUser();
   const userId = user?.id;
 
+  // Load dogs
   useEffect(() => {
     if (!userId) {
       setError("No user ID found. Please log in again.");
@@ -20,26 +30,55 @@ export default function DogInfoTab() {
       return;
     }
 
-    userApi
-      .getDogsByUserId(userId)
+    fetch(`http://localhost:8080/api/v1/users/${userId}/dogs`)
+      .then((res) => res.json())
       .then((data) => {
         setDogs(data);
         setLoading(false);
       })
-      .catch((err) => {
-        console.error("Failed to fetch dogs", err);
+      .catch(() => {
         setError("Could not load dog information.");
         setLoading(false);
       });
   }, [userId]);
 
-  if (loading) {
-    return <p>Loading dog information…</p>;
-  }
+  const startEditing = (dog: DogResponse) => {
+    setEditingDogId(dog.id);
+    setForm({
+      name: dog.name,
+      breed: dog.breed,
+      age: dog.age,
+      dogInfo: dog.dogInfo,
+    });
+  };
 
-  if (error) {
-    return <p className="text-red-600">{error}</p>;
-  }
+  const cancelEditing = () => {
+    setEditingDogId(null);
+  };
+
+  const saveDog = async () => {
+    if (!editingDogId) return;
+
+    setSaving(true);
+
+    try {
+      const updated = await dogApi.update(editingDogId, form);
+
+      setDogs((prev) =>
+        prev.map((d) => (d.id === editingDogId ? updated : d))
+      );
+
+      setEditingDogId(null);
+    } catch (err) {
+      console.error("Failed to update dog", err);
+      setError("Failed to update dog information.");
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  if (loading) return <p>Loading dog information…</p>;
+  if (error) return <p className="text-red-600">{error}</p>;
 
   return (
     <div>
@@ -53,10 +92,87 @@ export default function DogInfoTab() {
             key={dog.id}
             className="border p-4 rounded-md shadow-sm bg-white"
           >
-            <p className="font-bold text-lg">{dog.name}</p>
-            <p><strong>Breed:</strong> {dog.breed}</p>
-            <p><strong>Age:</strong> {dog.age}</p>
-            <p><strong>Info:</strong> {dog.dogInfo}</p>
+            {editingDogId !== dog.id && (
+              <>
+                <p className="font-bold text-lg mb-2">{dog.name}</p>
+                <p><strong>Breed:</strong> {dog.breed}</p>
+                <p><strong>Age:</strong> {dog.age}</p>
+                <p><strong>Info:</strong> {dog.dogInfo}</p>
+
+                <button
+                  className="btn-primary mt-4"
+                  onClick={() => startEditing(dog)}
+                >
+                  Edit
+                </button>
+              </>
+            )}
+
+            {editingDogId === dog.id && (
+              <div className="space-y-4">
+                <div>
+                  <label>Name</label>
+                  <input
+                    className="input"
+                    value={form.name}
+                    onChange={(e) =>
+                      setForm({ ...form, name: e.target.value })
+                    }
+                  />
+                </div>
+
+                <div>
+                  <label>Breed</label>
+                  <input
+                    className="input"
+                    value={form.breed}
+                    onChange={(e) =>
+                      setForm({ ...form, breed: e.target.value })
+                    }
+                  />
+                </div>
+
+                <div>
+                  <label>Age</label>
+                  <input
+                    type="number"
+                    className="input"
+                    value={form.age}
+                    onChange={(e) =>
+                      setForm({ ...form, age: Number(e.target.value) })
+                    }
+                  />
+                </div>
+
+                <div>
+                  <label>Info</label>
+                  <textarea
+                    className="input"
+                    value={form.dogInfo}
+                    onChange={(e) =>
+                      setForm({ ...form, dogInfo: e.target.value })
+                    }
+                  />
+                </div>
+
+                <div className="flex gap-4">
+                  <button
+                    className="btn-primary"
+                    onClick={saveDog}
+                    disabled={saving}
+                  >
+                    {saving ? "Saving…" : "Save"}
+                  </button>
+
+                  <button
+                    className="btn-secondary"
+                    onClick={cancelEditing}
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
         ))}
       </div>
