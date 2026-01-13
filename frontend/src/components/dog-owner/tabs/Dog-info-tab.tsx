@@ -54,9 +54,9 @@ export default function DogInfoTab() {
             className="border p-4 rounded-md shadow-sm bg-white"
           >
             <p className="font-bold text-lg">{dog.name}</p>
-            <p className="font-semibold m-1">Breed: {dog.breed}</p>
-            <p className="font-semibold m-1">Age: {dog.age}</p>
-            <p className="font-semibold m-1">Info: {dog.dogInfo}</p>
+            <p><strong>Breed:</strong> {dog.breed}</p>
+            <p><strong>Age:</strong> {dog.age}</p>
+            <p><strong>Info:</strong> {dog.dogInfo}</p>
           </div>
         ))}
       </div>
