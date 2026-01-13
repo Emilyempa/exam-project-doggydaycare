@@ -3,6 +3,10 @@ import { api } from '../api';
 export interface Dog {
   id: string; // UUID
   name: string;
+  age: number;
+  breed?: string
+  dogInfo?: string;
+  userId: string;
 }
 
 export interface UserResponse {

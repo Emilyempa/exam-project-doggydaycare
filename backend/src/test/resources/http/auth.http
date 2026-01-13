@@ -1,6 +1,6 @@
 @baseUrl = http://localhost:8080/api/v1
-@email = admin@doggydaycare.com
-@password = admin123
+@email = ownerone@doggydaycare.com
+@password = ownerone123
 
 ###
 # =======================
