@@ -133,7 +133,6 @@ export default function ContactInfoTab() {
             <input
               id="mobileNumber"
               className="input"
-              type="text"
               value={form.mobileNumber}
               onChange={(e) => setForm({ ...form, mobileNumber: e.target.value })}
             />
@@ -144,7 +143,6 @@ export default function ContactInfoTab() {
             <input
               id="emergencyContact"
               className="input"
-              type="text"
               value={form.emergencyContact}
               onChange={(e) =>
                 setForm({ ...form, emergencyContact: e.target.value })

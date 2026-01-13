@@ -322,7 +322,7 @@ export default function DogAttendance() {
                         disabled={status === 'CHECKED_OUT'}
                         className={`w-full mt-4 ${
                           !isToday
-                            ? "bg-secondary text-brand-secondary cursor-not-allowed"
+                            ? "bg-brand-secondary text-brand-secondary cursor-not-allowed"
                             : getStatusClasses()
                         }`}
                         onClick={() => {
