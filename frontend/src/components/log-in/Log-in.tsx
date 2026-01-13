@@ -130,9 +130,6 @@ export const LoginForm = () => {
             {loading ? "Logging in..." : "Log in"}
           </button>
 
-          <a href="#forgot-password">
-            Forgot your Password?
-          </a>
         </form>
       </Card>
     </section>
