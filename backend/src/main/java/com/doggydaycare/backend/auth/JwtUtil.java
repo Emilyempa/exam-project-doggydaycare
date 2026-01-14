@@ -12,6 +12,7 @@ import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 
@@ -31,7 +32,7 @@ public class JwtUtil {
 
     public String generateToken(UserEntity user) {
         Map<String, Object> claims = new HashMap<>();
-        claims.put("role", user.getRole().name());
+        claims.put("roles", List.of("ROLE_" + user.getRole().name()));
         claims.put("email", user.getEmail());
 
         return Jwts.builder()
