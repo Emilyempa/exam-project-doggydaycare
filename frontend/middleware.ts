@@ -24,7 +24,8 @@ export function middleware(request: NextRequest) {
     try {
       // Decode JWT and check the role
       const payload = JSON.parse(atob(token.split('.')[1]));
-      const role = payload.role;
+      const roles = payload.roles || [];
+      const role = roles[0]?.replace("ROLE_", "");
 
       // Role based access control
       if (path.startsWith('/admin-dashboard') && role !== 'ADMIN') {

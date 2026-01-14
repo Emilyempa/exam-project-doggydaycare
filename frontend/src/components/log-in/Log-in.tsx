@@ -34,16 +34,21 @@ export const LoginForm = () => {
 
       const data = await response.json();
 
+      // Decode JWT to get the real role
+      const payload = JSON.parse(atob(data.token.split('.')[1]));
+      const roles = payload.roles || [];
+      const role = roles[0]?.replace("ROLE_", "");
+
       // Save token and user info
       localStorage.setItem("token", data.token);
       localStorage.setItem("user", JSON.stringify({
         id: data.id,
         email: data.email,
-        role: data.role
+        role: role
       }));
 
       // Redirect based on the role
-      switch (data.role) {
+      switch (role) {
         case "ADMIN":
           router.push("/admin-dashboard");
           break;
@@ -56,6 +61,7 @@ export const LoginForm = () => {
         default:
           router.push("/home");
       }
+
 
     } catch (err) {
       setError("Login failed. Please check your credentials.");

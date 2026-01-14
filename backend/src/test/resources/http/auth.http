@@ -1,6 +1,6 @@
 @baseUrl = http://localhost:8080/api/v1
-@email = ownerone@doggydaycare.com
-@password = ownerone123
+@email = admin@doggydaycare.com
+@password = admin123
 
 ###
 # =======================
@@ -19,7 +19,7 @@ Content-Type: application/json
 # Example: Use token to access protected endpoint
 # =======================
 # Copy JWT from login-response "token"-field and put here:
-@jwt = <PUT_YOUR_JWT_HERE>
+@jwt = eyJhbGciOiJIUzI1NiJ9.eyJyb2xlcyI6WyJST0xFX0FETUlOIl0sImVtYWlsIjoiYWRtaW5AZG9nZ3lkYXljYXJlLmNvbSIsInN1YiI6ImFkbWluQGRvZ2d5ZGF5Y2FyZS5jb20iLCJpYXQiOjE3NjgzODcyODksImV4cCI6MTc2ODQ3MzY4OX0.mXLocSOi0326XDEPtq9l_LEowD1j0ZcIhs0E2rYkIxk
 
 GET {{baseUrl}}/users
 Authorization: Bearer {{jwt}}
