@@ -45,7 +45,7 @@ The application is structured into three main components:
 docker-compose up --build
 ```
 
-### Stop application via Docker
+### Stop application
 ```bash
 docker-compose down
 ```
