@@ -76,7 +76,7 @@ npm run dev
 
 ## Frontend Routes
 
-## **Root url: http://localhost:3000/
+## Root url: http://localhost:3000/
 
 | Route                  | Description                                                                                       |
 |------------------------|---------------------------------------------------------------------------------------------------|
