@@ -38,52 +38,51 @@ export default function ScheduleTab() {
 
   // Load dogs + bookings
   useEffect(() => {
-    if (!userId || !mounted) {
-      if (mounted) setLoading(false);
-      return;
-    }
+    if (userId && mounted) {
+      async function loadData() {
+        try {
+          // 1. Get all dogs
+          const dogList = await userApi.getDogsByUserId(userId as string);
+          setDogs(dogList);
+          setSelectedDogIds(dogList.map((d) => d.id));
 
-    async function loadData() {
-      try {
-        // 1. Get all dogs
-        const dogList = await userApi.getDogsByUserId(userId as string);
-        setDogs(dogList);
-        setSelectedDogIds(dogList.map((d) => d.id));
+          // 2. Get all bookings
+          const bookings = await bookingApi.getByUserId(userId as string);
 
-        // 2. Get all bookings
-        const bookings = await bookingApi.getByUserId(userId as string);
+          // 3. Group bookings by date
+          const grouped: Record<string, MultiDogDaySchedule> = {};
 
-        // 3. Group bookings by date
-        const grouped: Record<string, MultiDogDaySchedule> = {};
+          bookings.forEach((b: BookingResponse) => {
+            if (!grouped[b.date]) {
+              grouped[b.date] = {
+                date: b.date,
+                dogs: [],
+              };
+            }
 
-        bookings.forEach((b: BookingResponse) => {
-          if (!grouped[b.date]) {
-            grouped[b.date] = {
-              date: b.date,
-              dogs: [],
-            };
-          }
-
-          grouped[b.date].dogs.push({
-            dogId: b.dogId,
-            dogName: b.dogName,
-            dropOff: b.expectedCheckInTime.slice(0, 5),
-            pickUp: b.expectedCheckOutTime.slice(0, 5),
-            bookingId: b.id,
+            grouped[b.date].dogs.push({
+              dogId: b.dogId,
+              dogName: b.dogName,
+              dropOff: b.expectedCheckInTime.slice(0, 5),
+              pickUp: b.expectedCheckOutTime.slice(0, 5),
+              bookingId: b.id,
+            });
           });
-        });
 
-        const scheduleData = Object.values(grouped);
-        setSchedule(scheduleData);
-        setOriginalSchedule(structuredClone(scheduleData));
-      } catch (error) {
-        console.error("Failed to load data:", error);
-      } finally {
-        setLoading(false);
+          const scheduleData = Object.values(grouped);
+          setSchedule(scheduleData);
+          setOriginalSchedule(structuredClone(scheduleData));
+        } catch (error) {
+          console.error("Failed to load data:", error);
+        } finally {
+          setLoading(false);
+        }
       }
-    }
 
-    loadData();
+      void loadData();
+    } else if (mounted) {
+      setLoading(false);
+    }
   }, [userId, mounted]);
 
   // Week navigation
@@ -110,12 +109,23 @@ export default function ScheduleTab() {
   // Toggle dog selection
   const toggleDog = (dogId: string) => {
     setSelectedDogIds((prev) => {
-      const newIds = prev.includes(dogId)
+      const newIds = prev?.includes(dogId)
         ? prev.filter((id) => id !== dogId)
-        : [...prev, dogId];
+        : [...(prev ?? []), dogId];
       console.log('Selected dogs:', newIds);
       return newIds;
     });
+  };
+
+  // Helper to create dog schedule entry
+  const createDogScheduleEntry = (id: string) => {
+    const dog = dogs.find((d) => d.id === id)!;
+    return {
+      dogId: id,
+      dogName: dog.name,
+      dropOff: "08:00",
+      pickUp: "16:00",
+    };
   };
 
   // Add/remove day
@@ -131,15 +141,7 @@ export default function ScheduleTab() {
         ...prev,
         {
           date: dateStr,
-          dogs: selectedDogIds.map((id) => {
-            const dog = dogs.find((d) => d.id === id)!;
-            return {
-              dogId: id,
-              dogName: dog.name,
-              dropOff: "08:00",
-              pickUp: "16:00",
-            };
-          }),
+          dogs: selectedDogIds.map(createDogScheduleEntry),
         },
       ]);
     }
@@ -155,16 +157,15 @@ export default function ScheduleTab() {
     if (!isEditing) return;
 
     setSchedule((prev) =>
-      prev.map((day) =>
-        day.date === date
-          ? {
-            ...day,
-            dogs: day.dogs.map((dog) =>
-              dog.dogId === dogId ? { ...dog, [field]: value } : dog
-            ),
-          }
-          : day
-      )
+      prev.map((day) => {
+        if (day.date !== date) return day;
+
+        const updatedDogs = day.dogs.map((dog) =>
+          dog.dogId === dogId ? { ...dog, [field]: value } : dog
+        );
+
+        return { ...day, dogs: updatedDogs };
+      })
     );
   };
 
@@ -179,7 +180,7 @@ export default function ScheduleTab() {
       const toUpdate: Array<{ id: string; data: any }> = [];
       const toCreate: any[] = [];
 
-      // Check for deletions and updates
+      // Helper to check for deletions and updates
       originalSchedule.forEach((origDay) => {
         const currentDay = schedule.find((d) => d.date === origDay.date);
 
@@ -188,50 +189,16 @@ export default function ScheduleTab() {
           origDay.dogs.forEach((dog) => {
             if (dog.bookingId) toDelete.push(dog.bookingId);
           });
-        } else {
-          // Check each dog
-          origDay.dogs.forEach((origDog) => {
-            const currentDog = currentDay.dogs.find((d) => d.dogId === origDog.dogId);
-
-            if (!currentDog) {
-              // Dog removed from this day
-              if (origDog.bookingId) toDelete.push(origDog.bookingId);
-            } else if (
-              origDog.dropOff !== currentDog.dropOff ||
-              origDog.pickUp !== currentDog.pickUp
-            ) {
-              // Times changed - update
-              if (origDog.bookingId) {
-                toUpdate.push({
-                  id: origDog.bookingId,
-                  data: {
-                    expectedCheckInTime: currentDog.dropOff + ":00",
-                    expectedCheckOutTime: currentDog.pickUp + ":00",
-                  },
-                });
-              }
-            }
-          });
+          return;
         }
+
+        checkDogsInDay(origDay, currentDay, toDelete, toUpdate);
       });
 
       // Check for new bookings
       schedule.forEach((day) => {
         const origDay = originalSchedule.find((d) => d.date === day.date);
-
-        day.dogs.forEach((dog) => {
-          const isNew = !origDay || !origDay.dogs.some((d) => d.dogId === dog.dogId);
-
-          if (isNew) {
-            toCreate.push({
-              dogId: dog.dogId,
-              bookedById: userId,
-              date: day.date,
-              expectedCheckInTime: dog.dropOff + ":00",
-              expectedCheckOutTime: dog.pickUp + ":00",
-            });
-          }
-        });
+        checkNewDogsInDay(day, origDay, userId, toCreate);
       });
 
       // Execute changes
@@ -277,168 +244,221 @@ export default function ScheduleTab() {
     setIsEditing(false);
   };
 
-  // Prevent hydration mismatch by not rendering until mounted
-  if (!mounted) {
-    return <p>Loading schedule…</p>;
+  return renderContent();
+
+  function checkDogsInDay(
+    origDay: MultiDogDaySchedule,
+    currentDay: MultiDogDaySchedule,
+    toDelete: string[],
+    toUpdate: Array<{ id: string; data: any }>
+  ) {
+    origDay.dogs.forEach((origDog) => {
+      const currentDog = currentDay.dogs.find((d) => d.dogId === origDog.dogId);
+
+      if (!currentDog) {
+        if (origDog.bookingId) toDelete.push(origDog.bookingId);
+        return;
+      }
+
+      const timesChanged = origDog.dropOff !== currentDog.dropOff || origDog.pickUp !== currentDog.pickUp;
+      if (timesChanged && origDog.bookingId) {
+        toUpdate.push({
+          id: origDog.bookingId,
+          data: {
+            expectedCheckInTime: currentDog.dropOff + ":00",
+            expectedCheckOutTime: currentDog.pickUp + ":00",
+          },
+        });
+      }
+    });
   }
 
-  if (!userId) {
-    return <p>Please log in to view your schedule.</p>;
+  function checkNewDogsInDay(
+    day: MultiDogDaySchedule,
+    origDay: MultiDogDaySchedule | undefined,
+    userId: string,
+    toCreate: any[]
+  ) {
+    day.dogs.forEach((dog) => {
+      const isNew = !origDay || !origDay.dogs.some((d) => d.dogId === dog.dogId);
+
+      if (isNew) {
+        toCreate.push({
+          dogId: dog.dogId,
+          bookedById: userId,
+          date: day.date,
+          expectedCheckInTime: dog.dropOff + ":00",
+          expectedCheckOutTime: dog.pickUp + ":00",
+        });
+      }
+    });
   }
 
-  if (loading) {
-    return <p>Loading schedule…</p>;
-  }
+  function renderContent() {
+    if (!mounted) {
+      return <p>Loading schedule…</p>;
+    }
 
-  return (
-    <div className="space-y-4">
-      {/* Dog selection */}
-      <div className="flex gap-2 flex-wrap">
-        {dogs.map((dog) => (
-          <button
-            key={dog.id}
-            onClick={() => toggleDog(dog.id)}
-            disabled={!isEditing}
-            className={`px-3 py-1 rounded border ${
-              selectedDogIds.includes(dog.id)
-                ? "bg-brand-primary text-white"
-                : "bg-white text-gray-700"
-            } ${!isEditing ? "opacity-50 cursor-not-allowed" : ""}`}
-          >
-            {dog.name}
-          </button>
-        ))}
-      </div>
+    if (!userId) {
+      return <p>Please log in to view your schedule.</p>;
+    }
 
-      {/* Week navigation */}
-      <NextAndPrevious
-        currentIndex={weekNumber}
-        label={`Week ${weekNumber}, ${year}`}
-        onPrevious={() => setCurrentDate((d) => addDays(d, -7))}
-        onNext={() => setCurrentDate((d) => addDays(d, 7))}
-      />
+    if (loading) {
+      return <p>Loading schedule…</p>;
+    }
 
-      {/* Edit buttons */}
-      {isEditing ? (
-        <div className="flex gap-2">
-          <button
-            className="btn-primary flex-1"
-            onClick={handleSave}
-            disabled={saving}
-          >
-            {saving ? "Saving..." : "Save changes"}
-          </button>
-          <button
-            className="secondary flex-1"
-            onClick={handleCancel}
-            disabled={saving}
-          >
-            Cancel
-          </button>
+    return (
+      <div className="space-y-4">
+        {/* Dog selection */}
+        <div className="flex gap-2 flex-wrap">
+          {dogs.map((dog) => (
+            <button
+              key={dog.id}
+              onClick={() => toggleDog(dog.id)}
+              disabled={!isEditing}
+              className={`px-3 py-1 rounded border ${
+                selectedDogIds?.includes(dog.id)
+                  ? "bg-brand-primary text-white"
+                  : "bg-white text-gray-700"
+              } ${!isEditing ? "opacity-50 cursor-not-allowed" : ""}`}
+            >
+              {dog.name}
+            </button>
+          ))}
         </div>
-      ) : (
-        <button className="secondary w-full"
-                onClick={() => {
-                  setIsEditing(true);
-                  // All dogs chosen as standard
-                  setSelectedDogIds(dogs.map((d) => d.id));
-                }}
+
+        {/* Week navigation */}
+        <NextAndPrevious
+          currentIndex={weekNumber}
+          label={`Week ${weekNumber}, ${year}`}
+          onPrevious={() => setCurrentDate((d) => addDays(d, -7))}
+          onNext={() => setCurrentDate((d) => addDays(d, 7))}
+        />
+
+        {/* Edit buttons */}
+        {isEditing ? (
+          <div className="flex gap-2">
+            <button
+              className="btn-primary flex-1"
+              onClick={handleSave}
+              disabled={saving}
+            >
+              {saving ? "Saving..." : "Save changes"}
+            </button>
+            <button
+              className="secondary flex-1"
+              onClick={handleCancel}
+              disabled={saving}
+            >
+              Cancel
+            </button>
+          </div>
+        ) : (
+          <button className="secondary w-full"
+                  onClick={() => {
+                    setIsEditing(true);
+                    // All dogs chosen as standard
+                    setSelectedDogIds(dogs.map((d) => d.id));
+                  }}
+          >
+            Edit Schedule
+          </button>
+        )}
+        {isEditing && (
+          <p className="text-s text-brand-secondary">
+            {selectedDogIds.length} of {dogs.length} dogs selected
+          </p>
+        )}
+
+        {/* Schedule */}
+        <ul className="space-y-2">
+          {weekDays.map(renderDay)}
+        </ul>
+      </div>
+    );
+  }
+
+  function renderDay(day: any) {
+    const entry = schedule.find((d) => d.date === day.dateStr);
+    const isSelected = !!entry;
+    const isBookable = !day.isWeekend;
+
+    return (
+      <li key={day.dateStr} className="space-y-2">
+        <div
+          className={`p-4 rounded-lg ${
+            isSelected
+              ? "bg-brand-primary text-white"
+              : "bg-feature-primary text-brand-secondary"
+          } ${isBookable ? "" : "opacity-50"}`}
         >
-          Edit Schedule
-        </button>
-      )}
-      {isEditing && (
-        <p className="text-s text-brand-secondary">
-          {selectedDogIds.length} of {dogs.length} dogs selected
-        </p>
-      )}
+          <div className="flex justify-between items-center">
+            <div>
+              <p className="font-semibold">{day.dayName}</p>
+              <p className="text-sm">{day.fullDate}</p>
+            </div>
 
-      {/* Schedule */}
-      <ul className="space-y-2">
-        {weekDays.map((day) => {
-          const entry = schedule.find((d) => d.date === day.dateStr);
-          const isSelected = !!entry;
-          const isBookable = !day.isWeekend;
-
-          return (
-            <li key={day.dateStr} className="space-y-2">
-              <div
-                className={`p-4 rounded-lg ${
-                  isSelected
-                    ? "bg-brand-primary text-white"
-                    : "bg-feature-primary text-brand-secondary"
-                } ${isBookable ? "" : "opacity-50"}`}
+            {isEditing && isBookable && (
+              <button
+                onClick={() => toggleDay(day.dateStr)}
+                className="text-xs px-3 py-1 rounded bg-white text-gray-700"
               >
-                <div className="flex justify-between items-center">
+                {isSelected ? "Remove" : "Add"}
+              </button>
+            )}
+          </div>
+        </div>
+
+        {isSelected && (
+          <div className="bg-gray-50 p-3 rounded space-y-3">
+            {entry.dogs.map((dog) => (
+              <div key={dog.dogId} className="space-y-1">
+                <p className="font-medium">{dog.dogName}</p>
+
+                <div className="grid grid-cols-2 gap-3">
                   <div>
-                    <p className="font-semibold">{day.dayName}</p>
-                    <p className="text-sm">{day.fullDate}</p>
+                    <label htmlFor={`drop-${day.dateStr}-${dog.dogId}`} className="text-sm">
+                      Drop-off
+                    </label>
+                    {isEditing ? (
+                      <input
+                        id={`drop-${day.dateStr}-${dog.dogId}`}
+                        type="time"
+                        value={dog.dropOff}
+                        onChange={(e) =>
+                          updateTime(entry.date, dog.dogId, "dropOff", e.target.value)
+                        }
+                        className="input"
+                      />
+                    ) : (
+                      <div className="input bg-white">{dog.dropOff}</div>
+                    )}
                   </div>
 
-                  {isEditing && isBookable && (
-                    <button
-                      onClick={() => toggleDay(day.dateStr)}
-                      className="text-xs px-3 py-1 rounded bg-white text-gray-700"
-                    >
-                      {isSelected ? "Remove" : "Add"}
-                    </button>
-                  )}
+                  <div>
+                    <label htmlFor={`pick-${day.dateStr}-${dog.dogId}`} className="text-sm">
+                      Pick-up
+                    </label>
+                    {isEditing ? (
+                      <input
+                        id={`pick-${day.dateStr}-${dog.dogId}`}
+                        type="time"
+                        value={dog.pickUp}
+                        onChange={(e) =>
+                          updateTime(entry.date, dog.dogId, "pickUp", e.target.value)
+                        }
+                        className="input"
+                      />
+                    ) : (
+                      <div className="input bg-white">{dog.pickUp}</div>
+                    )}
+                  </div>
                 </div>
               </div>
-
-              {isSelected && (
-                <div className="bg-gray-50 p-3 rounded space-y-3">
-                  {entry.dogs.map((dog) => (
-                    <div key={dog.dogId} className="space-y-1">
-                      <p className="font-medium">{dog.dogName}</p>
-
-                      <div className="grid grid-cols-2 gap-3">
-                        <div>
-                          <label htmlFor={`drop-${day.dateStr}-${dog.dogId}`} className="text-sm">
-                            Drop-off
-                          </label>
-                          {isEditing ? (
-                            <input
-                              id={`drop-${day.dateStr}-${dog.dogId}`}
-                              type="time"
-                              value={dog.dropOff}
-                              onChange={(e) =>
-                                updateTime(entry.date, dog.dogId, "dropOff", e.target.value)
-                              }
-                              className="input"
-                            />
-                          ) : (
-                            <div className="input bg-white">{dog.dropOff}</div>
-                          )}
-                        </div>
-
-                        <div>
-                          <label htmlFor={`pick-${day.dateStr}-${dog.dogId}`} className="text-sm">
-                            Pick-up
-                          </label>
-                          {isEditing ? (
-                            <input
-                              id={`pick-${day.dateStr}-${dog.dogId}`}
-                              type="time"
-                              value={dog.pickUp}
-                              onChange={(e) =>
-                                updateTime(entry.date, dog.dogId, "pickUp", e.target.value)
-                              }
-                              className="input"
-                            />
-                          ) : (
-                            <div className="input bg-white">{dog.pickUp}</div>
-                          )}
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </li>
-          );
-        })}
-      </ul>
-    </div>
-  );
+            ))}
+          </div>
+        )}
+      </li>
+    );
+  }
 }
