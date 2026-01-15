@@ -149,6 +149,10 @@ Port: 3306
 
 Databas: doggydaycare
 
+---
 
-This project was developed as part of an academic assignment.
-By: Emilyempa
+## License
+
+This project was developed as part of an academic assignment and is intended for educational purposes.
+
+© 2026 Emily Pettersson
