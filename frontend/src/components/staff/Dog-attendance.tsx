@@ -286,28 +286,51 @@ export default function DogAttendance() {
                           isOpen ? "max-h-96 mt-8" : "max-h-0"
                         }`}
                       >
-                        <div className="rounded-2xl border bg-feature-secondary shadow-lg p-4 text-left">
-                          <h3 className="font-semibold text-lg mb-2">
-                            Dog owner info
-                          </h3>
+                        <div className="rounded-2xl border bg-feature-secondary shadow-lg p-4 text-left space-y-4">
+                          {/* Dog Info Section */}
+                          <div>
+                            <h3 className="font-semibold text-lg mb-2">
+                              Dog Info
+                            </h3>
+                            <ul className="space-y-1 text-sm">
+                              <li>
+                                <strong>Info:</strong> {dogs.get(dog.dogId)?.dogInfo || 'No dog info available'}
+                              </li>
+                            </ul>
+                          </div>
 
-                          <ul className="space-y-1 text-sm">
-                            <li>
-                              <strong>Name:</strong> {dog.owner.name}
-                            </li>
-                            <li>
-                              <strong>Phone:</strong> {dog.owner.phone}
-                            </li>
-                            <li>
-                              <strong>Email:</strong> {dog.owner.email}
-                            </li>
-                            <li>
-                              <strong>Emergency:</strong> {dog.owner.emergencyContact}
-                            </li>
-                            <li>
-                              <strong>Dog info:</strong> {dog.owner.notes}
-                            </li>
-                          </ul>
+                          {/* Owner Info Section */}
+                          <div>
+                            <h3 className="font-semibold text-lg mb-2">
+                              Owner Info
+                            </h3>
+                            <ul className="space-y-1 text-sm">
+                              <li>
+                                <strong>Name:</strong> {dog.owner.name}
+                              </li>
+                              <li>
+                                <strong>Phone:</strong> {dog.owner.phone}
+                              </li>
+                              <li>
+                                <strong>Email:</strong> {dog.owner.email}
+                              </li>
+                              <li>
+                                <strong>Emergency:</strong> {dog.owner.emergencyContact}
+                              </li>
+                            </ul>
+                          </div>
+
+                          {/* Booking Info Section */}
+                          <div>
+                            <h3 className="font-semibold text-lg mb-2">
+                              Booking Info
+                            </h3>
+                            <ul className="space-y-1 text-sm">
+                              <li>
+                                <strong>Notes:</strong> {dog.owner.notes}
+                              </li>
+                            </ul>
+                          </div>
                         </div>
                       </div>
 
