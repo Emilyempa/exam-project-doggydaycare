@@ -90,7 +90,7 @@ npm run dev
 
 ---
 
-# 🐾 API Documentation
+# API Documentation
 
 Below are the available API endpoints for the DoggyDaycare backend.
 All endpoints follow REST conventions and return JSON responses.
