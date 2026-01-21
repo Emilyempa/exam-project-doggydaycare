@@ -1,14 +1,26 @@
-# DoggyDaycare – Fullstack Application
+# User‑Centered Development of a Digital System for a Doggy Daycare
 
-DoggyDaycare is a fullstack web application built as a project assignment.
+This project presents a digital system designed to support and streamline daily operations
 
-The system supports core workflows for a dog daycare, including management of
+at a doggy daycare. The system is built with a strong user‑centered approach, where the needs of staff,
 
-dogs, owners, staff roles, and bookings.
+administrators and dog owners have shaped both the design and functionality.
 
-The application consists of a Next.js frontend, a Spring Boot backend,
+The application includes a homepage, a login view, and three tailored dashboards,
 
-and a MySQL database running in Docker.
+one for administrators, one for staff, and one for dog owners. Each dashboard is
+
+structured to be intuitive, accessible, and aligned with the specific tasks and responsibilities
+
+of its user group.
+
+The project demonstrates how thoughtful UX design, clear routines, and efficient information handling
+
+can reduce administrative workload, improve communication, and create smoother workflows in a small‑scale
+
+organization. By combining technical development with an understanding of users’ everyday challenges,
+
+the system contributes to a more structured, transparent, and effective operation.
 
 ---
 
@@ -45,7 +57,7 @@ The application is structured into three main components:
 docker-compose up --build
 ```
 
-### Stop application
+### Stop the full application
 ```bash
 docker-compose down
 ```
@@ -63,8 +75,11 @@ docker-compose up mysql
 Backend:
 
 ```bash
+cd backend
+
 mvn spring-boot:run
 ```
+or start backend threw BackendApplication.java in Intellij
 
 Frontend:
 
