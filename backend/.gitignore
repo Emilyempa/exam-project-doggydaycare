@@ -43,7 +43,6 @@ logs/
 # Direktiv och konfiguration
 .env
 .env.local
-*.properties
 
 # OS
 Thumbs.db
