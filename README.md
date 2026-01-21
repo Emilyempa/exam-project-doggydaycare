@@ -56,6 +56,7 @@ The application is structured into three main components:
 ```bash
 docker-compose up --build
 ```
+Then navigate to http://localhost:3000/
 
 ### Stop the full application
 ```bash
@@ -85,6 +86,8 @@ Frontend:
 
 ```bash
 cd frontend
+
+npm install
 
 npm run dev
 ```
@@ -163,9 +166,8 @@ Port: 3306
 Databas: doggydaycare
 
 ---
-# .env file (optional)
+## .env file (optional) add in root IF you want to change the database credentials
 
-## Database credentials
 DB_USERNAME=root
 
 DB_PASSWORD=rootpassword
@@ -174,6 +176,27 @@ DB_PASSWORD=rootpassword
 JWT_SECRET=your-secure-secret-key
 
 ---
+
+## Dev data initializer
+The backend contains a DevDataInitializer that seeds the database with example users, dogs and bookings
+when the application starts in a development environment.
+
+If the initializer finds existing data it will skip seeding (you’ll see a log message like "Dev data already present. Skipping initialization. Use --force to reinitialize.").
+Check the application logs for a "Dev data summary" and the sample credentials printed at startup.
+
+Example test accounts to use in log in (seeded by the initializer):
+
+ownerone@doggydaycare.com / ownerone123
+
+ownertwo@doggydaycare.com / ownertwo123
+
+staff@doggydaycare.com / staff123
+
+admin@doggydaycare.com / admin123
+
+(If you need to re-seed, run the backend with the --force argument — e.g. ./mvnw spring-boot:run
+
+-Dspring-boot.run.arguments=--force, java -jar target/*.jar --force, or pass --force to the container — to force the initializer to run again.)
 
 ## License
 
