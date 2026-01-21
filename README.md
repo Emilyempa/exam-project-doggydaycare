@@ -156,13 +156,22 @@ All endpoints follow REST conventions and return JSON responses.
 
 ---
 
-
-
 ## MySQL:
 
 Port: 3306
 
 Databas: doggydaycare
+
+---
+# .env file (optional)
+
+## Database credentials
+DB_USERNAME=root
+
+DB_PASSWORD=rootpassword
+
+## JWT secret for token signing
+JWT_SECRET=your-secure-secret-key
 
 ---
 
