@@ -179,6 +179,8 @@ public class DevDataInitializer implements ApplicationRunner {
 
             LOG.info("  OwnerOne - email: ownerone@doggydaycare.com, dummyPassword: ownerone123");
             LOG.info("  OwnerTwo - email: ownertwo@doggydaycare.com, dummyPassword: ownertwo123");
+            LOG.info(" Staff - email: staff@doggydaycare.com dummyPassword: staff123");
+            LOG.info(" Admin - email: admin@doggydaycare.com dummyPassword: admin123");
 
             LOG.info("Dev data summary:");
             LOG.info("  Users: {}", userRepository.count());

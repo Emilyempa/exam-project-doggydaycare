@@ -53,6 +53,7 @@ The application is structured into three main components:
 ## Running the Application with Docker
 
 ### Start the full application
+Start docker desktop
 ```bash
 docker-compose up --build
 ```
@@ -68,6 +69,7 @@ docker-compose down
 
 Database:
 
+Start docker desktop
 ```bash
 docker-compose up mysql
 ```
